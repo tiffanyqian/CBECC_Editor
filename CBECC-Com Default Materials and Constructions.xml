@@ -1,0 +1,207 @@
+    <ConsAssm>
+      <Name>Ground contact wall: Depth = 12ft</Name>
+      <CompatibleSurfType>ExteriorWall</CompatibleSurfType>
+      <SpecMthd>Layers</SpecMthd>
+      <MatRef index="0">Concrete 140lb 10in</MatRef>
+      <MatRef index="1">- none -</MatRef>
+      <MatRef index="2">- none -</MatRef>
+    </ConsAssm>
+    <ConsAssm>
+      <Name>Ground contact floor: Depth = 12ft</Name>
+      <CompatibleSurfType>ExteriorFloor</CompatibleSurfType>
+      <SpecMthd>Layers</SpecMthd>
+      <MatRef index="0">Concrete 140lb 10in</MatRef>
+      <MatRef index="1">- none -</MatRef>
+      <MatRef index="2">- none -</MatRef>
+      <MatRef index="3">- none -</MatRef>
+    </ConsAssm>
+    <ConsAssm>
+      <Name>2013 Roof</Name>
+      <CompatibleSurfType>Roof</CompatibleSurfType>
+      <SpecMthd>Layers</SpecMthd>
+      <FieldAppliedCoating>0</FieldAppliedCoating>
+      <CRRCInitialRefl>0.9</CRRCInitialRefl>
+      <CRRCAgedRefl>0.85</CRRCAgedRefl>
+      <CRRCInitialEmit>0.85</CRRCInitialEmit>
+      <CRRCAgedEmit>0.85</CRRCAgedEmit>
+      <MatRef index="0">Ctns Ins R-26</MatRef>
+      <MatRef index="1">Concrete 140lb 10in</MatRef>
+      <MatRef index="2">Cavity</MatRef>
+      <MatRef index="3">Ceiling Tile</MatRef>
+      <MatRef index="4">- none -</MatRef>
+      <RoofDens>0</RoofDens>
+      <BuiltUpRoof>0</BuiltUpRoof>
+      <BallastedRoof>0</BallastedRoof>
+    </ConsAssm>
+    <ConsAssm>
+      <Name>2013 Internal Ceiling/Floor</Name>
+      <CompatibleSurfType>InteriorFloor</CompatibleSurfType>
+      <SpecMthd>Layers</SpecMthd>
+      <MatRef index="0">Metal Deck - 1/16in.</MatRef>
+      <MatRef index="1">Concrete 140lb 10in</MatRef>
+      <MatRef index="2">Carpet</MatRef>
+      <MatRef index="3">- none -</MatRef>
+      <MatRef index="4">- none -</MatRef>
+      <MatRef index="5">- none -</MatRef>
+    </ConsAssm>
+    <ConsAssm>
+      <Name>2013 External Wall</Name>
+      <CompatibleSurfType>ExteriorWall</CompatibleSurfType>
+      <SpecMthd>Layers</SpecMthd>
+      <MatRef index="0">Metal Rain Screen</MatRef>
+      <MatRef index="1">Ctns Ins R-2</MatRef>
+      <MatRef index="2">Composite 16in OC R-21</MatRef>
+      <MatRef index="3">- none -</MatRef>
+      <MatRef index="4">- none -</MatRef>
+      <MatRef index="5">- none -</MatRef>
+    </ConsAssm>
+    <ConsAssm>
+      <Name>2013 Internal Partition</Name>
+      <CompatibleSurfType>InteriorWall</CompatibleSurfType>
+      <SpecMthd>Layers</SpecMthd>
+      <MatRef index="0">Gypsum 5/8 in.</MatRef>
+      <MatRef index="1">Air Metal Wall Framing 16 or 24in.</MatRef>
+      <MatRef index="2">Gypsum 5/8 in.</MatRef>
+    </ConsAssm>
+    <ConsAssm>
+      <Name>2013 Exposed Floor</Name>
+      <CompatibleSurfType>ExteriorFloor</CompatibleSurfType>
+      <MatRef index="0">Concrete 140lb 10in</MatRef>
+      <MatRef index="1">Carpet</MatRef>
+    </ConsAssm>
+    <ConsAssm>
+      <Name>Int Partition Demising</Name>
+      <CompatibleSurfType>InteriorWall</CompatibleSurfType>
+      <SpecMthd>Layers</SpecMthd>
+      <MatRef index="0">Ctns Ins R-2</MatRef>
+      <MatRef index="1">Composite 16in OC R-21</MatRef>
+      <MatRef index="2">- none -</MatRef>
+    </ConsAssm>	
+	<Mat>
+      <Name>Air Metal Wall Framing 16 or 24in.</Name>
+      <CodeCat>Air</CodeCat>
+      <CodeItem>Air - Metal Wall Framing - 16 or 24 in. OC</CodeItem>
+    </Mat>
+    <Mat>
+      <Name>Carpet</Name>
+      <CodeCat>Finish Materials</CodeCat>
+      <CodeItem>Carpet - 3/4 in.</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Cavity</Name>
+      <CodeCat>Air</CodeCat>
+      <CodeItem>Air - Cavity - Wall Roof Ceiling - 4 in. or more</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ceiling Tile</Name>
+      <CodeCat>Finish Materials</CodeCat>
+      <CodeItem>Acoustic Tile - 1/2 in.</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Composite 16in OC R-0</Name>
+      <CodeCat>Composite</CodeCat>
+      <CodeItem/>
+      <FrmMat>Metal</FrmMat>
+      <FrmConfig>Wall16inOC</FrmConfig>
+      <FrmDepth>3_5In</FrmDepth>
+      <CavityInsOpt>R-0</CavityInsOpt>
+    </Mat>
+	<Mat>
+      <Name>Composite 16in OC R-21</Name>
+      <CodeCat>Composite</CodeCat>
+      <CodeItem/>
+      <FrmMat>Metal</FrmMat>
+      <FrmConfig>Wall16inOC</FrmConfig>
+      <FrmDepth>5_5In</FrmDepth>
+      <CavityInsOpt>R-21</CavityInsOpt>
+    </Mat>
+	<Mat>
+      <Name>Concrete - 140 lb/ft3 - 4 in</Name>
+      <CodeCat>Concrete</CodeCat>
+      <CodeItem>Concrete - 140 lb/ft3 - 4 in.</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Concrete 140lb 8in</Name>
+      <CodeCat>Concrete</CodeCat>
+      <CodeItem>Concrete - 140 lb/ft3 - 8 in.</CodeItem>
+    </Mat>
+    <Mat>
+      <Name>Concrete 140lb 10in</Name>
+      <CodeCat>Concrete</CodeCat>
+      <CodeItem>Concrete - 140 lb/ft3 - 10 in.</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-0.01</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R0.01</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-0.10</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R0.10</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-0.50</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R0.10</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-1</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R1.00</CodeItem>
+    </Mat>
+    <Mat>
+      <Name>Ctns Ins R-2</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R2.00</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-5</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R5.00</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-10</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R10.00</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-15</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R15.00</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-20</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R20.00</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-25</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R25.00</CodeItem>
+    </Mat>
+    <Mat>
+      <Name>Ctns Ins R-26</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R26.00</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Ctns Ins R-30</Name>
+      <CodeCat>Insulation Board</CodeCat>
+      <CodeItem>Compliance Insulation R30.00</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Gypsum 5/8 in.</Name>
+      <CodeCat>Bldg Board and Siding</CodeCat>
+      <CodeItem>Gypsum Board - 5/8 in.</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Metal Rain Screen</Name>
+      <CodeCat>Bldg Board and Siding</CodeCat>
+      <CodeItem>Metal Siding - 1/16 in.</CodeItem>
+    </Mat>
+	<Mat>
+      <Name>Metal Deck - 1/16in.</Name>
+      <CodeCat>Bldg Board and Siding</CodeCat>
+      <CodeItem>Metal Deck - 1/16 in.</CodeItem>
+    </Mat>
