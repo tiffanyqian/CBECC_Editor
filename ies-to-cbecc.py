@@ -154,5 +154,18 @@ ET.indent(add_mat_con)
 for child in add_mat_con:
     proj.append(child)
 
+# Checks to see if the Ground Floor construction exists- if not, will add it at the bottom of <Proj>
+if len(root.findall(".//GroundFloor")) == 0:
+    # The following turns the above string into a workable element and adds it before the end of the <Proj> tag in the original file
+    grndflr = ET.fromstring("<Proj><ConsAssm><Name>GroundFloor</Name><CompatibleSurfType>UndergroundFloor</CompatibleSurfType><SlabType>UnheatedSlabOnGrade</SlabType></ConsAssm></Proj>")
+    ET.indent(grndflr)
+    for child in grndflr:
+        proj.append(child)
+# Changes existing bottom/external floors to use the above Underground floor
+for ef in root.findall(".//ExtFlr"):
+    ef[2].text = "UndergroundFloor"
+    ef.tag = "UndgrFlr"
+
 # This writes the changes made to the output file
+ET.indent(tree)
 tree.write(output_filename)
