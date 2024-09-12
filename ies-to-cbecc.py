@@ -3,8 +3,8 @@ import re
 
 ## ** USER INPUT ** ##
 # FILE NAMES:
-input_filename = "./Seawall/OLD R Seawall T3.cibd22x"
-output_filename = "./Seawall/R Seawall T3.cibd22x"
+input_filename = "./files/OLD NR Seawall T3.cibd22x"
+output_filename = "./files/nr_testing_output.cibd22x"
 # FENESTRATION INPUTS: leave any of them 0 for default values or update to desired values
 SHGC = 0                    # Default = 0.3
 U_Factor = 0                # Default = 0.45
@@ -163,7 +163,7 @@ if len(root.findall(".//GroundFloor")) == 0:
         proj.append(child)
 # Changes existing bottom/external floors to use the above Underground floor
 for ef in root.findall(".//ExtFlr"):
-    ef[2].text = "UndergroundFloor"
+    ef[2].text = "GroundFloor"
     ef.tag = "UndgrFlr"
 
 # This writes the changes made to the output file

@@ -1,9 +1,9 @@
 import xml.etree.ElementTree as ET
 
-nr_filename = "./Seawall/NR Seawall T3.cibd22x"
-r_filename = "./Seawall/R Seawall T3.cibd22x"
+nr_filename = "./files/r_testing_output.cibd22x"
+r_filename = "./files/nr_testing_output.cibd22x"
 
-output_filename = "./Seawall/Seawall T3.cibd22x"
+output_filename = "./files/testing_output.cibd22x"
 
 r_tree = ET.parse(r_filename)
 r_root = r_tree.getroot()
@@ -57,4 +57,6 @@ for fen in nr_root.findall(".//FenCons"):
     if fen[0].text not in r_fen:
         r_proj.append(fen)
 
+# This writes the changes made to the output file
+ET.indent(r_tree)
 r_tree.write(output_filename)
