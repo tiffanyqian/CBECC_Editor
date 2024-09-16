@@ -7,15 +7,54 @@ output_filename = "./files/testing_output.cibd22x"
 
 r_tree = ET.parse(r_filename)
 r_root = r_tree.getroot()
+r_proj = r_root.findall("./Proj")[0]
 r_bldg = r_root.findall("./Proj/Bldg")[0]
 
 nr_tree = ET.parse(nr_filename)
 nr_root = nr_tree.getroot()
-nr_bldg = r_root.findall("./Proj/Bldg")[0]
+nr_bldg = nr_root.findall("./Proj/Bldg")[0]
 
-# This changes GeometryInpType to Detailed
+# Get a list of the storeys existing across both NR and R files -- will sort automatically with no duplicates.
+combined_storeys = set()
+for res_story in r_root.findall(".//ResZnGrp"):
+    combined_storeys.add(str(res_story[0].text))
+for nr_story in nr_root.findall(".//Story"):
+    combined_storeys.add(str(nr_story[0].text))
+combined_storeys = sorted(list(combined_storeys))
+
+print("Enter index of NR/R split (index starts at 0, enter first R floor):")
+print(combined_storeys)
+story_split_ind = input()
+if len(story_split_ind) == 0:
+    exit("Invalid input. Enter a value.")
+elif int(story_split_ind) > len(combined_storeys):
+    exit("Out of bounds- entered a number greater than floors there are.")
+else:
+    story_split_ind = int(story_split_ind)
+    print("You entered:",combined_storeys[story_split_ind],"... Running combination script now.")
+
+# These lists contain what floors belong to NR and which belong to R
+nr_story_list = combined_storeys[:story_split_ind]
+r_story_list = combined_storeys[story_split_ind:]
+
+# Remove all Res storeys from NR file
+for nr_story in nr_root.findall(".//Story"):
+    if str(nr_story[0].text) in r_story_list:
+        nr_bldg.remove(nr_story)
+# Remove all NonRes storeys from R file
+for r_story in r_root.findall(".//ResZnGrp"):
+    if str(r_story[0].text) in nr_story_list:
+        r_bldg.remove(r_story)
+
+# This changes Residential GeometryInpType to Detailed
 for child in r_root.findall(".//GeometryInpType"):
     child.text = "Detailed"
+
+# Find NR only thermal zones (so we can delete the R thermal zones)
+nr_thrmzn = list()
+for nr_tzr in nr_root.findall(".//ThrmlZnRef"):
+    nr_thrmzn.append(nr_tzr.text)
+print(nr_thrmzn)
 
 # This finds where the BldgAz tag is in the Residential file
 ba_ind = list(r_bldg).index(r_root.findall(".//BldgAz")[0]) + 1
@@ -23,10 +62,11 @@ ba_ind = list(r_bldg).index(r_root.findall(".//BldgAz")[0]) + 1
 for nr_story in nr_root.findall(".//Story"):
     r_bldg.insert(ba_ind, nr_story)
     ba_ind += 1
-# This copies over all NonRes Thermal Zones over to the Residential file below above Story copies
+# This copies over ONLY NonRes Thermal Zones over to the Residential file below above Story additions
 for nr_tz in nr_root.findall(".//ThrmlZn"):
-    r_bldg.insert(ba_ind, nr_tz)
-    ba_ind += 1
+    if str(nr_tz[0].text) in nr_thrmzn:
+        r_bldg.insert(ba_ind, nr_tz)
+        ba_ind += 1
 
 # The following copies over NonRes Material, Construction Assemblies, and Fenestration over to the Residential file
 for nr_mat in nr_root.findall(".//Mat"):
