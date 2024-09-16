@@ -3,8 +3,8 @@ import re
 
 ## ** USER INPUT ** ##
 # FILE NAMES:
-input_filename = "./files/OLD NR Seawall T3.cibd22x"
-output_filename = "./files/nr_testing_output.cibd22x"
+input_filename = "INPUT_FILENAME_HERE.cibd22x"
+output_filename = "OUTPUT_FILENAME_HERE.cibd22x"
 # FENESTRATION INPUTS: leave any of them 0 for default values or update to desired values
 SHGC = 0                    # Default = 0.3
 U_Factor = 0                # Default = 0.45
@@ -15,7 +15,14 @@ tree = ET.parse(input_filename)
 root = tree.getroot()
 proj = root.findall("./Proj")[0]
 bldg = root.findall("./Proj/Bldg")[0]
-    
+
+# Stores information about whether building is NonResidential (NR) or Residential (R)
+b_type = "NR"
+# This changes GeometryInpType to Detailed
+for child in root.findall(".//GeometryInpType"):
+    b_type = "R"
+    child.text = "Detailed"
+
 # This removes any Hole Door constructions
 for dr in root.findall(".//DrCons"):
     if dr[0].text == "HoleDoor":
@@ -24,20 +31,20 @@ for spc in root.findall(".//Dr/.."):
     for child in spc.findall("./Dr"):
         if child.text == "HoleDoor":
             spc.remove(child)
+
+# Sets what Construction Assembly / Story tags to search for depending on if the file is NR or R
+consassm = ".//ConsAssm"
+story = ".//Story"
+if b_type == "R":
+    consassm = ".//ResConsAssm"
+    story = ".//ResZnGrp"
+
 # This removes Attic constructions & Floors with Attics in them for both Residential and NonResidential
-for rca in root.findall(".//ResConsAssm"):
+for rca in root.findall(consassm):
     for child in rca.findall("./Name"):
         if len(re.findall("(Attic)",child.text)) != 0:
             proj.remove(rca)
-for parent in root.findall(".//ResZnGrp"):
-    for child in parent.findall("./Name"):
-        if len(re.findall("(Attic)",child.text)) != 0:
-            bldg.remove(parent)
-for rca in root.findall(".//ConsAssm"):
-    for child in rca.findall("./Name"):
-        if len(re.findall("(Attic)",child.text)) != 0:
-            proj.remove(rca)
-for parent in root.findall(".//Story"):
+for parent in root.findall(story):
     for child in parent.findall("./Name"):
         if len(re.findall("(Attic)",child.text)) != 0:
             bldg.remove(parent)
@@ -82,7 +89,7 @@ for sp in bldg.findall(".//Spc"):
     if len(sp.findall("./IntLtgRegHtGnRadFrac")) != 0:
         sp.remove(sp.findall("./IntLtgRegHtGnRadFrac")[0])
 
-# This updates Fenestration values SHGC, U Factor, Product Type, to default / user desired valuse
+# This updates Non-Residential Fenestration values SHGC, U Factor, Product Type, to default / user desired values
 for child in root.findall(".//SHGC"):
     if SHGC == 0:
         child.text = str(0.3)
@@ -98,6 +105,22 @@ for child in root.findall(".//FenProdType"):
         child.text = "CurtainWall"
     else:
         child.text = Fen_Product_Type
+
+# Updates Residential Windows SHGC, U Factor to default / user desired values
+for reswin in root.findall(".//ResWinType"):
+    # Checks to see if "NFRC U-Factor" tag exists. If so, update to desired value, otherwise, create and set to desired value.
+    if len(reswin.findall("NFRCUfactor")) == 0:
+        r_ufactor = ET.SubElement(reswin, "NFRCUfactor")
+        r_ufactor.text = str(U_Factor)
+    else:
+        reswin.findall("NFRCUfactor")[0].text = str(0.45)
+    
+    # Checks to see if "NFRC SHGC" tag exists. If so, update to desired value, otherwise, create and set to desired value.
+    if len(reswin.findall("NFRCSHGC")) == 0:
+        r_shgc = ET.SubElement(reswin, "NFRCSHGC")
+        r_shgc.text = str(SHGC)
+    else:
+        reswin.findall("NFRCSHGC")[0].text = str(0.3)
 
 # Remove and replace default Materials & Construction Assemblies (keeps custom names)
 default_mat = ["Air Metal Wall Framing 16 or 24in.","Carpet","Cavity","Ceiling Tile","Composite 16in OC R-0","Composite 16in OC R-21",
