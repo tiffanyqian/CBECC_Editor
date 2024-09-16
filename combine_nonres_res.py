@@ -7,11 +7,11 @@ output_filename = "./files/testing_output.cibd22x"
 
 r_tree = ET.parse(r_filename)
 r_root = r_tree.getroot()
-r_proj = r_root.findall("./Proj")[0]
 r_bldg = r_root.findall("./Proj/Bldg")[0]
 
 nr_tree = ET.parse(nr_filename)
 nr_root = nr_tree.getroot()
+nr_bldg = r_root.findall("./Proj/Bldg")[0]
 
 # This changes GeometryInpType to Detailed
 for child in r_root.findall(".//GeometryInpType"):
