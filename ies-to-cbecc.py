@@ -90,17 +90,21 @@ for sp in bldg.findall(".//Spc"):
     if len(sp.findall("./IntLtgRegHtGnRadFrac")) != 0:
         sp.remove(sp.findall("./IntLtgRegHtGnRadFrac")[0])
 
+# This defaults Fenestration values if user didn't specify any inputs
+if SHGC == 0:
+    SHGC = str(0.3)
+else:
+    SHGC = str(SHGC)
+if U_Factor == 0:
+        U_Factor = str(0.45)
+else:
+    U_Factor = str(U_Factor)
+
 # This updates Non-Residential Fenestration values SHGC, U Factor, Product Type, to default / user desired values
 for child in root.findall(".//SHGC"):
-    if SHGC == 0:
-        child.text = str(0.3)
-    else:
-        child.text = str(SHGC)
+    child.text = SHGC
 for child in root.findall(".//UFactor"):
-    if U_Factor == 0:
-        child.text = str(0.45)
-    else:
-        child.text = str(U_Factor)
+    child.text = U_Factor
 for child in root.findall(".//FenProdType"):
     if Fen_Product_Type == "0":
         child.text = "CurtainWall"
@@ -112,14 +116,14 @@ for reswin in root.findall(".//ResWinType"):
     # Checks to see if "NFRC U-Factor" tag exists. If so, update to desired value, otherwise, create and set to desired value.
     if len(reswin.findall("NFRCUfactor")) == 0:
         r_ufactor = ET.SubElement(reswin, "NFRCUfactor")
-        r_ufactor.text = str(U_Factor)
+        r_ufactor.text = U_Factor
     else:
         reswin.findall("NFRCUfactor")[0].text = str(0.45)
     
     # Checks to see if "NFRC SHGC" tag exists. If so, update to desired value, otherwise, create and set to desired value.
     if len(reswin.findall("NFRCSHGC")) == 0:
         r_shgc = ET.SubElement(reswin, "NFRCSHGC")
-        r_shgc.text = str(SHGC)
+        r_shgc.text = SHGC
     else:
         reswin.findall("NFRCSHGC")[0].text = str(0.3)
 
