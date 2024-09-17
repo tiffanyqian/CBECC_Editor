@@ -1,9 +1,12 @@
 import xml.etree.ElementTree as ET
 
+## ** USER INPUT ** -------------------
+# File Names:
 nr_filename = "./files/r_testing_output.cibd22x"
 r_filename = "./files/nr_testing_output.cibd22x"
 
 output_filename = "./files/testing_output.cibd22x"
+## ------------------------------------
 
 r_tree = ET.parse(r_filename)
 r_root = r_tree.getroot()
