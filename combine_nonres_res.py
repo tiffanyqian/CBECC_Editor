@@ -1,9 +1,10 @@
 import xml.etree.ElementTree as ET
+import re
 
 ## ** USER INPUT ** -------------------
 # File Names:
-nr_filename = "./files/r_testing_output.cibd22x"
-r_filename = "./files/nr_testing_output.cibd22x"
+nr_filename = "./files/nr_testing_output.cibd22x"
+r_filename = "./files/r_testing_output.cibd22x"
 
 output_filename = "./files/testing_output.cibd22x"
 ## ------------------------------------
@@ -49,6 +50,15 @@ for r_story in r_root.findall(".//ResZnGrp"):
     if str(r_story[0].text) in nr_story_list:
         r_bldg.remove(r_story)
 
+# Updates NR space names to match those in R space to make sure references to zones stay defined
+spc_r_to_nr = dict()
+for ns in nr_root.findall(".//Spc"):
+    spc_r_to_nr.update({ns[0].text: re.findall(r"(.*)_",ns[0].text)[0]})
+    ns[0].text = re.findall(r"(.*)_",ns[0].text)[0]
+
+for ns_ref in nr_root.findall(".//AdjacentSpcRef"):
+    ns_ref.text = spc_r_to_nr[ns_ref.text]
+
 # This changes Residential GeometryInpType to Detailed
 for child in r_root.findall(".//GeometryInpType"):
     child.text = "Detailed"
@@ -57,7 +67,6 @@ for child in r_root.findall(".//GeometryInpType"):
 nr_thrmzn = list()
 for nr_tzr in nr_root.findall(".//ThrmlZnRef"):
     nr_thrmzn.append(nr_tzr.text)
-print(nr_thrmzn)
 
 # This finds where the BldgAz tag is in the Residential file
 ba_ind = list(r_bldg).index(r_root.findall(".//BldgAz")[0]) + 1
