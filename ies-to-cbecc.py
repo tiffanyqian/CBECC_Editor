@@ -1,14 +1,15 @@
 import xml.etree.ElementTree as ET
 import re
 
-## ** USER INPUT ** ##
-# FILE NAMES:
+## ** USER INPUT ** -------------------
+# File Names:
 input_filename = "INPUT_FILENAME_HERE.cibd22x"
 output_filename = "OUTPUT_FILENAME_HERE.cibd22x"
-# FENESTRATION INPUTS: leave any of them 0 for default values or update to desired values
+# Fenestration Inputs: leave any of them 0 for default values or update to desired values
 SHGC = 0                    # Default = 0.3
 U_Factor = 0                # Default = 0.45
 Fen_Product_Type = "0"      # Default = "CurtainWall"   (NOTE: This should always be a string)
+## ------------------------------------
 
 # This creates an ElementTree out of the input file to make easier edits
 tree = ET.parse(input_filename)
