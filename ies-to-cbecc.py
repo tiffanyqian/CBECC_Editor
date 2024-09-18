@@ -50,6 +50,10 @@ for parent in root.findall(story):
         if len(re.findall("(Attic)",child.text)) != 0:
             bldg.remove(parent)
 
+# This makes ALL vent sources for spaces be Forced if not already done so
+for vs in root.findall(".//VentSrc"):
+    vs.text = "Forced"
+
 # This section removes necessary sections based on tags
 if len(bldg.findall("./TotStoryCnt")) != 0:
     bldg.remove(bldg.findall("./TotStoryCnt")[0])
