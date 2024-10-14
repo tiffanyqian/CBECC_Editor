@@ -3,12 +3,22 @@ import re
 
 ## ** USER INPUT ** -------------------
 # File Names:
-input_filename = "INPUT_FILENAME_HERE.cibd22x"
-output_filename = "OUTPUT_FILENAME_HERE.cibd22x"
+input_filename = input("Enter Input File Name/Path: ")
+if len(input_filename) == 0:
+    exit("Enter an input file.")
+output_filename = input("Enter Output File Name/Path (leave blank to overwrite input): ")
+if len(output_filename) == 0:
+    output_filename = input_filename
 # Fenestration Inputs: leave any of them 0 for default values or update to desired values
-SHGC = 0                    # Default = 0.3
-U_Factor = 0                # Default = 0.45
-Fen_Product_Type = "0"      # Default = "CurtainWall"   (NOTE: This should always be a string)
+fen_inputs = input("  Enter Fenestration Inputs or leave as default? (Y for yes, anything else is no): ")
+if fen_inputs == "Y":
+    SHGC = input("\tSHGC (Default=0.3): ")
+    U_Factor = input("\tU-Factor (Default=0.45): ")
+    Fen_Product_Type = input("\tFenestration Product Type (Default=CurtainWall): ")
+else:
+    SHGC = str(0.3)
+    U_Factor = str(0.45)
+    Fen_Product_Type = "CurtainWall"
 ## ------------------------------------
 
 # This creates an ElementTree out of the input file to make easier edits
@@ -93,16 +103,6 @@ for sp in bldg.findall(".//Spc"):
         sp.remove(sp.findall("./IntLtgRegHtGnSpcFrac")[0])
     if len(sp.findall("./IntLtgRegHtGnRadFrac")) != 0:
         sp.remove(sp.findall("./IntLtgRegHtGnRadFrac")[0])
-
-# This defaults Fenestration values if user didn't specify any inputs
-if SHGC == 0:
-    SHGC = str(0.3)
-else:
-    SHGC = str(SHGC)
-if U_Factor == 0:
-        U_Factor = str(0.45)
-else:
-    U_Factor = str(U_Factor)
 
 # This updates Non-Residential Fenestration values SHGC, U Factor, Product Type, to default / user desired values
 for child in root.findall(".//SHGC"):
