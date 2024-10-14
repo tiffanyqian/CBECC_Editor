@@ -3,8 +3,12 @@ import os
 
 ## ** USER INPUT ** -------------------
 # File Names to compare:
-f1 = "INPUT_FIRST_FILENAME_HERE.cibd22x"
-f2 = "INPUT_SECOND_FILENAME_HERE.cibd22x"
+f1 = input("Input First File: ")
+if len(f1) == 0:
+    exit("Enter a file.")
+f2 = input("Enter Second File: ")
+if len(f2) == 0:
+    exit("Enter a file.")
 ## ------------------------------------
 
 if os.path.isfile("differences.txt"):

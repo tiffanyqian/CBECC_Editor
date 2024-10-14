@@ -3,10 +3,17 @@ import re
 
 ## ** USER INPUT ** -------------------
 # File Names:
-nr_filename = "./files/nr_testing_output.cibd22x"
-r_filename = "./files/r_testing_output.cibd22x"
+# File Names:
+nr_filename = input("Enter NON-RESIDENTIAL Input File Name/Path: ")
+if len(nr_filename) == 0:
+    exit("Enter a NR input file.")
+r_filename = input("Enter RESIDENTIAL Input File Name/Path: ")
+if len(r_filename) == 0:
+    exit("Enter a R input file.")
 
-output_filename = "./files/testing_output.cibd22x"
+output_filename = input("Enter Output File Name/Path: ")
+if len(output_filename) == 0:
+    exit("Enter an output filename.")
 ## ------------------------------------
 
 r_tree = ET.parse(r_filename)
