@@ -3,10 +3,10 @@ import os
 
 ## ** USER INPUT ** -------------------
 # File Names to compare:
-f1 = input("Input First File: ")
+f1 = input(r"Input First File: ")
 if len(f1) == 0:
     exit("Enter a file.")
-f2 = input("Enter Second File: ")
+f2 = input(r"Enter Second File: ")
 if len(f2) == 0:
     exit("Enter a file.")
 ## ------------------------------------

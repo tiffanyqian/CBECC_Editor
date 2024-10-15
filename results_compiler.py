@@ -2,7 +2,7 @@ import pandas as pd
 import glob
 
 ## ** USER INPUT ** -------------------
-logs_path = input("Enter logs path: ")
+logs_path = input(r"Enter logs path: ")
 output_fname = "Logs.csv"
 # (NOTE: log file will be created in same folder as entered log path)
 ## ------------------------------------

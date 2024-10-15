@@ -3,10 +3,10 @@ import re
 
 ## ** USER INPUT ** -------------------
 # File Names:
-input_filename = input("Enter Input File Name/Path: ")
+input_filename = input(r"Enter Input File Name/Path: ")
 if len(input_filename) == 0:
     exit("Enter an input file.")
-output_filename = input("Enter Output File Name/Path (leave blank to overwrite input): ")
+output_filename = input(r"Enter Output File Name/Path (leave blank to overwrite input): ")
 if len(output_filename) == 0:
     output_filename = input_filename
 # Fenestration Inputs: leave any of them 0 for default values or update to desired values

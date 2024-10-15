@@ -4,14 +4,14 @@ import re
 ## ** USER INPUT ** -------------------
 # File Names:
 # File Names:
-nr_filename = input("Enter NON-RESIDENTIAL Input File Name/Path: ")
+nr_filename = input(r"Enter NON-RESIDENTIAL Input File Name/Path: ")
 if len(nr_filename) == 0:
     exit("Enter a NR input file.")
-r_filename = input("Enter RESIDENTIAL Input File Name/Path: ")
+r_filename = input(r"Enter RESIDENTIAL Input File Name/Path: ")
 if len(r_filename) == 0:
     exit("Enter a R input file.")
 
-output_filename = input("Enter Output File Name/Path: ")
+output_filename = input(r"Enter Output File Name/Path: ")
 if len(output_filename) == 0:
     exit("Enter an output filename.")
 ## ------------------------------------
