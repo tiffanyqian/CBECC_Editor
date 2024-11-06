@@ -34,6 +34,23 @@ for child in root.findall(".//GeometryInpType"):
     b_type = "R"
     child.text = "Detailed"
 
+# This finds the index range of tags (<tag>) associated with Document Author / Responsible Designer generation in reports in order to remove them to make them blank in the final report
+# for later signing.
+first_auth_ind = len(proj)
+last_auth_ind = 0
+for ind, child in enumerate(proj):
+    if re.search(r"(Doc)|(RespDsgnr)",child.tag) is not None:
+        if ind < first_auth_ind:
+            first_auth_ind = ind
+        if ind > last_auth_ind:
+            last_auth_ind = ind
+# This is error checking, only deleting tags if there were any tags found at all.
+if first_auth_ind < last_auth_ind:
+    for i in range(last_auth_ind, first_auth_ind-1, -1):
+        proj.remove(proj[i])
+else:
+    print("No Document Author / Responsible Designer tags found or removed. Did you open this file in CBECC-2022 before running the script?")
+
 # This removes any Hole Door constructions
 for dr in root.findall(".//DrCons"):
     if dr[0].text == "HoleDoor":
