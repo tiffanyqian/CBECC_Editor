@@ -167,11 +167,11 @@ if b_type == "NR":
     add_mat_con_str = "<Proj>\n\
     <ConsAssm>\n<Name>Ground contact wall: Depth = 12ft</Name>\n<CompatibleSurfType>ExteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"1\">- none -</MatRef>\n<MatRef index=\"2\">- none -</MatRef>\n</ConsAssm>\n\
     <ConsAssm>\n<Name>Ground contact floor: Depth = 12ft</Name>\n<CompatibleSurfType>ExteriorFloor</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"1\">- none -</MatRef>\n<MatRef index=\"2\">- none -</MatRef>\n<MatRef index=\"3\">- none -</MatRef>\n</ConsAssm>\n\
-    <ConsAssm>\n<Name>2013 Roof</Name>\n<CompatibleSurfType>Roof</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<FieldAppliedCoating>0</FieldAppliedCoating>\n<CRRCInitialRefl>0.9</CRRCInitialRefl>\n<CRRCAgedRefl>0.85</CRRCAgedRefl><CRRCInitialEmit>0.85</CRRCInitialEmit>\n<CRRCAgedEmit>0.85</CRRCAgedEmit>\n<MatRef index=\"0\">Ctns Ins R-26</MatRef>\n<MatRef index=\"1\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"2\">Cavity</MatRef>\n<MatRef index=\"3\">Ceiling Tile</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<RoofDens>0</RoofDens>\n<BuiltUpRoof>0</BuiltUpRoof>\n<BallastedRoof>0</BallastedRoof>\n</ConsAssm>\n\
-    <ConsAssm>\n<Name>2013 Internal Ceiling/Floor</Name>\n<CompatibleSurfType>InteriorFloor</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Metal Deck - 1/16in.</MatRef>\n<MatRef index=\"1\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"2\">Carpet</MatRef>\n<MatRef index=\"3\">- none -</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<MatRef index=\"5\">- none -</MatRef>\n</ConsAssm>\n\
-    <ConsAssm>\n<Name>2013 External Wall</Name>\n<CompatibleSurfType>ExteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Metal Rain Screen</MatRef>\n<MatRef index=\"1\">Ctns Ins R-2</MatRef>\n<MatRef index=\"2\">Composite 16in OC R-21</MatRef>\n<MatRef index=\"3\">- none -</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<MatRef index=\"5\">- none -</MatRef>\n</ConsAssm>\n\
-    <ConsAssm>\n<Name>2013 Internal Partition</Name>\n<CompatibleSurfType>InteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Gypsum 5/8 in.</MatRef>\n<MatRef index=\"1\">Air Metal Wall Framing 16 or 24in.</MatRef>\n<MatRef index=\"2\">Gypsum 5/8 in.</MatRef>\n</ConsAssm>\n\
-    <ConsAssm>\n<Name>2013 Exposed Floor</Name>\n<CompatibleSurfType>ExteriorFloor</CompatibleSurfType>\n<MatRef index=\"0\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"1\">Carpet</MatRef>\n</ConsAssm>\n\
+    <ConsAssm>\n<Name>Roof</Name>\n<CompatibleSurfType>Roof</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<FieldAppliedCoating>0</FieldAppliedCoating>\n<CRRCInitialRefl>0.9</CRRCInitialRefl>\n<CRRCAgedRefl>0.85</CRRCAgedRefl><CRRCInitialEmit>0.85</CRRCInitialEmit>\n<CRRCAgedEmit>0.85</CRRCAgedEmit>\n<MatRef index=\"0\">Ctns Ins R-26</MatRef>\n<MatRef index=\"1\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"2\">Cavity</MatRef>\n<MatRef index=\"3\">Ceiling Tile</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<RoofDens>0</RoofDens>\n<BuiltUpRoof>0</BuiltUpRoof>\n<BallastedRoof>0</BallastedRoof>\n</ConsAssm>\n\
+    <ConsAssm>\n<Name>Internal Ceiling/Floor</Name>\n<CompatibleSurfType>InteriorFloor</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Metal Deck - 1/16in.</MatRef>\n<MatRef index=\"1\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"2\">Carpet</MatRef>\n<MatRef index=\"3\">- none -</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<MatRef index=\"5\">- none -</MatRef>\n</ConsAssm>\n\
+    <ConsAssm>\n<Name>External Wall</Name>\n<CompatibleSurfType>ExteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Metal Rain Screen</MatRef>\n<MatRef index=\"1\">Ctns Ins R-2</MatRef>\n<MatRef index=\"2\">Composite 16in OC R-21</MatRef>\n<MatRef index=\"3\">- none -</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<MatRef index=\"5\">- none -</MatRef>\n</ConsAssm>\n\
+    <ConsAssm>\n<Name>Internal Partition</Name>\n<CompatibleSurfType>InteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Gypsum 5/8 in.</MatRef>\n<MatRef index=\"1\">Air Metal Wall Framing 16 or 24in.</MatRef>\n<MatRef index=\"2\">Gypsum 5/8 in.</MatRef>\n</ConsAssm>\n\
+    <ConsAssm>\n<Name>Exposed Floor</Name>\n<CompatibleSurfType>ExteriorFloor</CompatibleSurfType>\n<MatRef index=\"0\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"1\">Carpet</MatRef>\n</ConsAssm>\n\
     <ConsAssm>\n<Name>Int Partition Demising</Name>\n<CompatibleSurfType>InteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Ctns Ins R-2</MatRef>\n<MatRef index=\"1\">Composite 16in OC R-21</MatRef>\n<MatRef index=\"2\">- none -</MatRef>\n</ConsAssm>\n\
     <Mat>\n<Name>Air Metal Wall Framing 16 or 24in.</Name>\n<CodeCat>Air</CodeCat>\n<CodeItem>Air - Metal Wall Framing - 16 or 24 in. OC</CodeItem>\n</Mat>\n\
     <Mat>\n<Name>Carpet</Name>\n<CodeCat>Finish Materials</CodeCat>\n<CodeItem>Carpet - 3/4 in.</CodeItem>\n</Mat>\n\
@@ -203,6 +203,15 @@ if b_type == "NR":
     ET.indent(add_mat_con)
     for child in add_mat_con:
         proj.append(child)
+
+# This removes 2013 from the names of Construction Assembly and Fenestration Constructions for both Residential and NonResidential
+list_cons_rem = [".//ConsAssm",".//ResConsAssm",".//FenCons"]
+for ca in list_cons_rem:
+    for rm2013 in root.findall(ca):
+        for child in rm2013.findall("./Name"):
+            name = re.findall(r"(^2013\s)(.*)",child.text)
+            if len(name) > 0:
+                child.text = str(name[0][1])
 
 # Checks to see if the Ground Floor construction exists- if not, will add it at the bottom of <Proj>
 if len(root.findall(".//GroundFloor")) == 0:
