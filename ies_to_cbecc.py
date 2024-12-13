@@ -212,6 +212,13 @@ for ca in list_cons_rem:
             name = re.findall(r"(^2013\s)(.*)",child.text)
             if len(name) > 0:
                 child.text = str(name[0][1])
+# This removes 2013 from the REFERENCES to the Construction Assembly / Fenestration Cons
+list_cons_rem = [".//ConsAssmRef",".//FenConsRef"]
+for ca in list_cons_rem:
+    for rm2013 in root.findall(ca):
+        name = re.findall(r"(^2013\s)(.*)",rm2013.text)
+        if len(name) > 0:
+            rm2013.text = str(name[0][1])
 
 # Checks to see if the Ground Floor construction exists- if not, will add it at the bottom of <Proj>
 if len(root.findall(".//GroundFloor")) == 0:
