@@ -209,7 +209,7 @@ class MainWindow(QMainWindow):
         self.f_nr_input.setFixedSize(200,25)
         input_layout.addWidget(self.f_nr_input, 3, 0, 1, 2)
         self.nr_pre_check = QCheckBox("Run IES to CBECC script on NR file?")
-        self.nr_pre_check.setToolTip("Default Unchecked. If unchecked, will run the ies-to-cbecc script with default values on the NR file before further processing. If checked, won't.")
+        self.nr_pre_check.setToolTip("Default Unchecked. If checked, will run the ies-to-cbecc script with default values on the NR file before further processing. If checked, won't.")
         input_layout.addWidget(self.nr_pre_check, 4, 0, 1, 2)
         
         # RIGHT LAYOUT BOX
@@ -222,7 +222,7 @@ class MainWindow(QMainWindow):
         self.f_r_input.setFixedSize(200,25)
         input_layout.addWidget(self.f_r_input, 3, 3, 1, 2)
         self.r_pre_check = QCheckBox("Run IES to CBECC script on R file?")
-        self.r_pre_check.setToolTip("Default Unchecked. If unchecked, will run the ies-to-cbecc script with default values on the R file before further processing. If checked, won't.")
+        self.r_pre_check.setToolTip("Default Unchecked. If checked, will run the ies-to-cbecc script with default values on the R file before further processing. If checked, won't.")
         input_layout.addWidget(self.r_pre_check, 4, 3, 1, 2)
 
         # Output File Label
@@ -304,7 +304,7 @@ class MainWindow(QMainWindow):
         self.szhp_curr_file.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
         grid_layout.addWidget(self.szhp_curr_file,1,0)
         self.szhp_pre_check = QCheckBox("Run IES to CBECC script on file?")
-        self.szhp_pre_check.setToolTip("Default Unchecked. If unchecked, will run the ies-to-cbecc script with default values on the file before further processing. If checked, won't.")
+        self.szhp_pre_check.setToolTip("Default Unchecked. If checked, will run the ies-to-cbecc script with default values on the file before further processing. If checked, won't.")
         grid_layout.addWidget(self.szhp_pre_check,2,0)
 
         blank_lab = QLabel("")
@@ -389,7 +389,7 @@ class MainWindow(QMainWindow):
         self.doas_curr_file.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
         grid_layout.addWidget(self.doas_curr_file,1,0)
         self.doas_pre_check = QCheckBox("Run IES to CBECC script on file?")
-        self.doas_pre_check.setToolTip("Default Unchecked. If unchecked, will run the ies-to-cbecc script with default values on the file before further processing. If checked, won't.")
+        self.doas_pre_check.setToolTip("Default Unchecked. If checked, will run the ies-to-cbecc script with default values on the file before further processing. If checked, won't.")
         grid_layout.addWidget(self.doas_pre_check,2,0)
 
         blank_lab = QLabel("")
@@ -661,8 +661,6 @@ class MainWindow(QMainWindow):
 
         nr_r_dir = QFileDialog.getExistingDirectory(self, "Select Folder")
         if len(nr_r_dir) != 0:
-            self.f_input.clear()
-
             nr_r_dir = nr_r_dir + r"/"
             print(nr_r_dir)
             nr_r_files = list()
