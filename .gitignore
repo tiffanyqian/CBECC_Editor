@@ -7,5 +7,5 @@ testing.cibd22x
 files
 differences.txt
 
-# Ignore App_Wrapper folder
-App_Wrapper
+# Ignore App_Wrapper sub-dirrectories
+App_Wrapper/*/
