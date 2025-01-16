@@ -26,7 +26,8 @@ class MainWindow(QMainWindow):
         global i_c_files, nr_r_files, nr_r_storeys
         global SZHP_list, DOAS_list, DOAS_count
         DOAS_count = 1
-        i_c_dir = nr_r_dir = logs_dir = r"C:/"
+        i_c_dir = ""
+        nr_r_dir = logs_dir = r"C:/"
         i_c_files = nr_r_files = nr_r_storeys = []
 
         super().__init__()
@@ -76,7 +77,7 @@ class MainWindow(QMainWindow):
         lab1.setStyleSheet("background-color: red")
         lab1.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
         frame_layout.addWidget(lab1)
-        lab2 = QLabel("\n[1] Select folder and .cibd22x file on the left. Change output name if you don't want it to overwrite the original\n\
+        lab2 = QLabel("\n[1] Select .cibd22x file on the left. Change output name in textbox below if you don't want it to overwrite the original file\n\
                       [2] Select / change checkboxes on the right to customize the run\n\
                       [3] Click run to run the script on the file")
         lab2.setWordWrap(True)
@@ -84,10 +85,10 @@ class MainWindow(QMainWindow):
         frame_layout.addWidget(lab2)
 
         # LEFT LAYOUT BOX
-        folder_select = QPushButton("Select Folder")
+        folder_select = QPushButton("Select File")
         folder_select.clicked.connect(self.i_c_open_folder_clicked)
         ch_layout.addWidget(folder_select,0,0)
-        self.curr_folder = QLabel("No Folder Selected")
+        self.curr_folder = QLabel("No File Selected")
         font_curr_folder = self.curr_folder.font()
         font_curr_folder.setItalic(True)
         self.curr_folder.setFont(font_curr_folder)
@@ -96,22 +97,14 @@ class MainWindow(QMainWindow):
         self.curr_folder.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
         ch_layout.addWidget(self.curr_folder,1,0)
 
-        l1 = QLabel("Select Input File:")
-        l1.setFixedSize(250,25)
-        ch_layout.addWidget(l1,3,0)
-        self.f_input = QComboBox()
-        self.f_input.setToolTip("Available .cibd22x files from the selected folder above. If you see nothing here, then either you did not select a folder or there are no .cibd22x files.")
-        self.f_input.addItems(i_c_files)
-        self.f_input.currentTextChanged.connect(self.in_f_changed)
-        self.f_input.setFixedSize(250,25)
-        ch_layout.addWidget(self.f_input,4,0)
-
         l2 = QLabel("Enter Output Filename:")
         l2.setFixedSize(250,25)
-        ch_layout.addWidget(l2,5,0)
-        self.f_output = QLineEdit(self.f_input.currentText())
+        ch_layout.addWidget(l2,2,0)
+        self.f_output = QLineEdit()
+        self.f_output.setEnabled(False)
         self.f_output.setFixedSize(250,25)
-        ch_layout.addWidget(self.f_output,6,0)
+        self.f_output.textChanged.connect(self.in_f_changed)
+        ch_layout.addWidget(self.f_output,3,0)
 
         blank_lab = QLabel("")
         blank_lab.setFixedWidth(25)
@@ -156,7 +149,7 @@ class MainWindow(QMainWindow):
         self.i_c_button = QPushButton("Run")
         self.i_c_button.setFixedHeight(50)
         frame_layout.addWidget(self.i_c_button)
-        if len(self.f_input) > 0:
+        if len(self.f_output.text()) > 0:
             self.i_c_button.setEnabled(True)
         else:
             self.i_c_button.setEnabled(False)
@@ -215,7 +208,7 @@ class MainWindow(QMainWindow):
         self.f_nr_input.currentTextChanged.connect(self.in_nr_r_changed)
         self.f_nr_input.setFixedSize(200,25)
         input_layout.addWidget(self.f_nr_input, 3, 0, 1, 2)
-        self.nr_pre_check = QCheckBox("IES to CBECC script already run on NR file?")
+        self.nr_pre_check = QCheckBox("Run IES to CBECC script on NR file?")
         self.nr_pre_check.setToolTip("Default Unchecked. If unchecked, will run the ies-to-cbecc script with default values on the NR file before further processing. If checked, won't.")
         input_layout.addWidget(self.nr_pre_check, 4, 0, 1, 2)
         
@@ -228,7 +221,7 @@ class MainWindow(QMainWindow):
         self.f_r_input.currentTextChanged.connect(self.in_nr_r_changed)
         self.f_r_input.setFixedSize(200,25)
         input_layout.addWidget(self.f_r_input, 3, 3, 1, 2)
-        self.r_pre_check = QCheckBox("IES to CBECC script already run on R file?")
+        self.r_pre_check = QCheckBox("Run IES to CBECC script on R file?")
         self.r_pre_check.setToolTip("Default Unchecked. If unchecked, will run the ies-to-cbecc script with default values on the R file before further processing. If checked, won't.")
         input_layout.addWidget(self.r_pre_check, 4, 3, 1, 2)
 
@@ -310,7 +303,7 @@ class MainWindow(QMainWindow):
         self.szhp_curr_file.setWordWrap(True)
         self.szhp_curr_file.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
         grid_layout.addWidget(self.szhp_curr_file,1,0)
-        self.szhp_pre_check = QCheckBox("IES to CBECC script already run on file?")
+        self.szhp_pre_check = QCheckBox("Run IES to CBECC script on file?")
         self.szhp_pre_check.setToolTip("Default Unchecked. If unchecked, will run the ies-to-cbecc script with default values on the file before further processing. If checked, won't.")
         grid_layout.addWidget(self.szhp_pre_check,2,0)
 
@@ -395,7 +388,7 @@ class MainWindow(QMainWindow):
         self.doas_curr_file.setWordWrap(True)
         self.doas_curr_file.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
         grid_layout.addWidget(self.doas_curr_file,1,0)
-        self.doas_pre_check = QCheckBox("IES to CBECC script already run on file?")
+        self.doas_pre_check = QCheckBox("Run IES to CBECC script on file?")
         self.doas_pre_check.setToolTip("Default Unchecked. If unchecked, will run the ies-to-cbecc script with default values on the file before further processing. If checked, won't.")
         grid_layout.addWidget(self.doas_pre_check,2,0)
 
@@ -498,11 +491,13 @@ class MainWindow(QMainWindow):
         self.results_compiler.setLayout(frame_layout)
 
     def in_f_changed(self, s):
-        self.f_output.setText(s)
+        global i_c_dir
+        
         self.output_log.setStyleSheet("background-color: gray")
         self.output_log.setText("")
-        if len(s) > 0:
-            self.i_c_button.setEnabled(True)
+
+        if len(s)*len(i_c_dir) > 0:
+                self.i_c_button.setEnabled(True)
         else:
             self.i_c_button.setEnabled(False)
     
@@ -518,9 +513,8 @@ class MainWindow(QMainWindow):
             self.nr_r_story_button.setEnabled(False)
 
     def i_c_button_clicked(self):
-        self.input_filename = i_c_dir + self.f_input.currentText()
-        self.output_filname = i_c_dir + self.f_output.text()
-        outname = self.output_filname
+        self.input_filename = i_c_dir
+        self.output_filname = str(re.findall(r"(.*/).*$",i_c_dir)[0]) + self.f_output.text()
         self.uvalue = self.f_uvalue.text()
         self.shgc = self.f_shgc.text()
         
@@ -528,7 +522,7 @@ class MainWindow(QMainWindow):
 
         ies_to_cbecc_run(self.input_filename, self.output_filname, self.uvalue, self.shgc, self.attic_check.checkState() == Qt.CheckState.Checked)
         
-        self.output_log.setText(self.output_log.text()+"\nRun Successful. Output file to: "+outname)
+        self.output_log.setText(self.output_log.text()+"\nRun Successful. Output file to: "+self.output_filname)
         self.output_log.setStyleSheet("background-color: green")
     
     def nr_r_story_button_clicked(self):
@@ -641,24 +635,26 @@ class MainWindow(QMainWindow):
             self.f_shgc.setStyleSheet("background-color: gray")
         
     def i_c_open_folder_clicked(self):
-        global i_c_dir
-        global i_c_files
+        global i_c_dir, f_output
 
-        i_c_dir = QFileDialog.getExistingDirectory(self, "Select Folder")
+        self.curr_folder.setText("No File Selected")
+        self.f_output.setText("")
+        self.f_output.setEnabled(False)
+
+        i_c_dir = ""
+        i_c_dir, end_discard = QFileDialog.getOpenFileName(self, "Select File",r"C://","2022 CBECC Files (*.cibd22x)")
+
         if len(i_c_dir) != 0:
-            self.f_input.clear()
+            if re.search(".cibd22x",i_c_dir):
+                self.curr_folder.setText(i_c_dir)
+                self.f_output.setText(re.findall(r".*/(.*$)",i_c_dir)[0])
+                
+                self.f_output.setEnabled(True)
+                self.i_c_button.setEnabled(True)
 
-            i_c_dir = i_c_dir + r"/"
-            print(i_c_dir)
-            i_c_files = list()
-            for f in os.listdir(i_c_dir):
-                f_path = i_c_dir + f
-                if(os.path.isfile(f_path)):
-                    if re.search(".cibd22x",f):
-                        i_c_files.append(str(f))
-            self.f_input.addItems(i_c_files)
-            self.curr_folder.setText(i_c_dir)
-
+                self.output_log.setStyleSheet("background-color: gray")
+                self.output_log.setText("")
+                
     def nr_r_open_folder_clicked(self):
         global nr_r_dir
         global nr_r_files
