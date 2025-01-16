@@ -9,6 +9,8 @@ if len(input_filename) == 0:
 output_filename = input(r"Enter Output File Name/Path (leave blank to overwrite input): ")
 if len(output_filename) == 0:
     output_filename = input_filename
+elif len(re.findall(r".cibd22x$",output_filename)) == 0:
+    output_filename = output_filename + ".cibd22x"
 # Fenestration Inputs: leave any of them 0 for default values or update to desired values
 fen_inputs = input("  Enter Fenestration Inputs or leave as default? (Y for yes, anything else is no): ")
 if fen_inputs == "Y":
@@ -30,9 +32,10 @@ bldg = root.findall("./Proj/Bldg")[0]
 # Stores information about whether building is NonResidential (NR) or Residential (R)
 b_type = "NR"
 # This changes GeometryInpType to Detailed
-for child in root.findall(".//GeometryInpType"):
+if len(root.findall(".//ResZnGrp")) > 0:
     b_type = "R"
-    child.text = "Detailed"
+    for child in root.findall(".//GeometryInpType"):
+        child.text = "Detailed"
 
 # This finds the index range of tags (<tag>) associated with Document Author / Responsible Designer generation in reports in order to remove them to make them blank in the final report
 # for later signing.
