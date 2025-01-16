@@ -15,6 +15,8 @@ def ies_to_cbecc_run(input_f, output_f, f_uvalue, f_shgc, attic_check):
     output_filename = str(output_f)
     if len(output_filename) == 0:
         output_filename = input_filename
+    elif len(re.findall(r".cibd22x$",output_filename)) == 0:
+        output_filename = output_filename + ".cibd22x"
     # Fenestration Inputs:
     SHGC = str(f_shgc)
     U_Factor = str(f_uvalue)
@@ -30,9 +32,10 @@ def ies_to_cbecc_run(input_f, output_f, f_uvalue, f_shgc, attic_check):
     # Stores information about whether building is NonResidential (NR) or Residential (R)
     b_type = "NR"
     # This changes GeometryInpType to Detailed
-    for child in root.findall(".//GeometryInpType"):
+    if len(root.findall(".//ResZnGrp")) > 0:
         b_type = "R"
-        child.text = "Detailed"
+        for child in root.findall(".//GeometryInpType"):
+            child.text = "Detailed"
 
     # This finds the index range of tags (<tag>) associated with Document Author / Responsible Designer generation in reports in order to remove them to make them blank in the final report
     # for later signing.
