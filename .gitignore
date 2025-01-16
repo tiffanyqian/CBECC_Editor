@@ -1,0 +1,11 @@
+# Ignore the xtras folder
+xtras
+
+# Ignore testing files
+test.py
+testing.cibd22x
+files
+differences.txt
+
+# Ignore App_Wrapper folder
+App_Wrapper
