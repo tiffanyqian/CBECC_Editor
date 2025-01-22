@@ -512,22 +512,24 @@ def found_log_count(logs_path):
 def logs_compile_run(logs_path):
   global files
   # Base creation for the Annual TDV standard/proposed table
-  header = ["HTG","CLG","FANS","HREJ","PUMPS","DHW","IND LGHT","RECEPT","PROCESS","OTH LGHT","PROC. MTRS",\
+  header = ["Case Name", "Conditioned Floor Area (SF)", "HTG","CLG","FANS","HREJ","PUMPS","DHW","IND LGHT","RECEPT","PROCESS","OTH LGHT","PROC. MTRS",\
                 "PV","BATTERY","HTG","CLG","FANS","HREJ","PUMPS","DHW","IND LGHT","RECEPT","PROCESS","OTH LGHT",\
                   "PROC. MTRS","PV","BATTERY","HTG","CLG","FANS","HREJ","PUMPS","DHW","IND LGHT","RECEPT","PROCESS",\
                       "OTH LGHT","PROC. MTRS","PV","BATTERY"]
   output_df = pd.DataFrame()
 
-  # Stepping throuhg every log file found to pull the correct numbers / perform math and get annual values.
+  # Stepping through every log file found to pull the correct numbers / perform math and get annual values.
   for filename in files:
     # This will save the start date and filename for each run to be appended with data 
     fpath = logs_path + "\\" + filename
     df = pd.read_csv(fpath,index_col=False,skiprows=2)
 
-    # In case multiple runs within one log file, this will step throuhg each run and append.
+    # In case multiple runs within one log file, this will step through each run and append.
     # NOTE: this may result in keeping unwanted results. Read the output log file carefully.
     for i in range(len(df.index)):
-      casename = df.iloc[i,0]+" "+df.iloc[i,1]
+      dt = df.iloc[i,0]
+      casename = df.iloc[i,1]
+      area = df.iloc[i,5]
       arr = df.to_numpy()
       li = arr.tolist()
 
@@ -536,14 +538,14 @@ def logs_compile_run(logs_path):
       p_l1 = arr[i][14:21]+29.3*arr[i][29:36]+0.293*arr[i][42:49]/1000
       p_l2 = arr[i][22:26]+29.3*arr[i][37:41]+0.293*arr[i][50:54]/1000
 
-      standard = li[i][127:134]+li[i][135:141]+li[i][262:269]+li[i][270:276]+b_l1.tolist()+b_l2.tolist()+li[i][98:100]
-      proposed = li[i][55:62]+li[i][64:70]+li[i][247:254]+li[i][255:261]+p_l1.tolist()+p_l2.tolist()+li[i][26:28]
+      standard = [casename, area]+li[i][127:134]+li[i][135:141]+li[i][262:269]+li[i][270:276]+b_l1.tolist()+b_l2.tolist()+li[i][98:100]
+      proposed = [casename, area]+li[i][55:62]+li[i][64:70]+li[i][247:254]+li[i][255:261]+p_l1.tolist()+p_l2.tolist()+li[i][26:28]
 
       # This appends the calculated run information to the output dataframe
       if output_df.empty:
-        output_df = pd.DataFrame([standard,proposed],index=[casename+" Standard",casename+" Proposed"],columns=header)
+        output_df = pd.DataFrame([standard,proposed],index=[dt+" Standard",dt+" Proposed"],columns=header)
       else:
-        output_df = pd.concat([output_df,pd.DataFrame([standard,proposed],index=[casename+" Standard",casename+" Proposed"],columns=header)])
+        output_df = pd.concat([output_df,pd.DataFrame([standard,proposed],index=[dt+" Standard",dt+" Proposed"],columns=header)])
 
   # This saves all the annual TDV calculations for each run into the original log path with the given output file name "output_fname"
   output_df.to_csv(logs_path+"\\Logs.csv")
