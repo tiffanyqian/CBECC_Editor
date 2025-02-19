@@ -33,9 +33,13 @@ def ies_to_cbecc_run(input_f, output_f, f_uvalue, f_shgc, attic_check):
     b_type = "NR"
     # This changes GeometryInpType to Detailed
     if len(root.findall(".//ResZnGrp")) > 0:
-        b_type = "R"
+        b_type = "R"    # This sets building type to R
         for child in root.findall(".//GeometryInpType"):
             child.text = "Detailed"
+        
+    # If NR thermal zones exist, change type to Both (Note: DIFFERENT from NonRes zones in a residential model, called ResOtherZn)
+    if len(root.findall(".//ThrmlZn")) > 0:
+        b_type = "RNR"
 
     # This finds the index range of tags (<tag>) associated with Document Author / Responsible Designer generation in reports in order to remove them to make them blank in the final report
     # for later signing.
@@ -152,7 +156,7 @@ def ies_to_cbecc_run(input_f, output_f, f_uvalue, f_shgc, attic_check):
         else:
             reswin.findall("NFRCSHGC")[0].text = str(0.3)
 
-    if b_type == "NR":
+    if b_type == "NR" or b_type == "RNR":
         # Remove and replace default NR Materials & Construction Assemblies (keeps custom names)
         default_mat = ["Air Metal Wall Framing 16 or 24in.","Carpet","Cavity","Ceiling Tile","Composite 16in OC R-0","Composite 16in OC R-21",
                     "Concrete - 140 lb/ft3 - 4 in","Concrete 140lb 8in","Concrete 140lb 10in","Ctns Ins R-0.01","Ctns Ins R-0.10","Ctns Ins R-0.50",
@@ -168,44 +172,68 @@ def ies_to_cbecc_run(input_f, output_f, f_uvalue, f_shgc, attic_check):
                 proj.remove(child)
 
         # The following contains a string of default CBECC materials and constructions to be added
-        add_mat_con_str = "<Proj>\n\
-        <ConsAssm>\n<Name>Ground contact wall: Depth = 12ft</Name>\n<CompatibleSurfType>ExteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"1\">- none -</MatRef>\n<MatRef index=\"2\">- none -</MatRef>\n</ConsAssm>\n\
-        <ConsAssm>\n<Name>Ground contact floor: Depth = 12ft</Name>\n<CompatibleSurfType>ExteriorFloor</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"1\">- none -</MatRef>\n<MatRef index=\"2\">- none -</MatRef>\n<MatRef index=\"3\">- none -</MatRef>\n</ConsAssm>\n\
-        <ConsAssm>\n<Name>Roof</Name>\n<CompatibleSurfType>Roof</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<FieldAppliedCoating>0</FieldAppliedCoating>\n<CRRCInitialRefl>0.9</CRRCInitialRefl>\n<CRRCAgedRefl>0.85</CRRCAgedRefl><CRRCInitialEmit>0.85</CRRCInitialEmit>\n<CRRCAgedEmit>0.85</CRRCAgedEmit>\n<MatRef index=\"0\">Ctns Ins R-26</MatRef>\n<MatRef index=\"1\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"2\">Cavity</MatRef>\n<MatRef index=\"3\">Ceiling Tile</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<RoofDens>0</RoofDens>\n<BuiltUpRoof>0</BuiltUpRoof>\n<BallastedRoof>0</BallastedRoof>\n</ConsAssm>\n\
-        <ConsAssm>\n<Name>Internal Ceiling/Floor</Name>\n<CompatibleSurfType>InteriorFloor</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Metal Deck - 1/16in.</MatRef>\n<MatRef index=\"1\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"2\">Carpet</MatRef>\n<MatRef index=\"3\">- none -</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<MatRef index=\"5\">- none -</MatRef>\n</ConsAssm>\n\
-        <ConsAssm>\n<Name>External Wall</Name>\n<CompatibleSurfType>ExteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Metal Rain Screen</MatRef>\n<MatRef index=\"1\">Ctns Ins R-2</MatRef>\n<MatRef index=\"2\">Composite 16in OC R-21</MatRef>\n<MatRef index=\"3\">- none -</MatRef>\n<MatRef index=\"4\">- none -</MatRef>\n<MatRef index=\"5\">- none -</MatRef>\n</ConsAssm>\n\
-        <ConsAssm>\n<Name>Internal Partition</Name>\n<CompatibleSurfType>InteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Gypsum 5/8 in.</MatRef>\n<MatRef index=\"1\">Air Metal Wall Framing 16 or 24in.</MatRef>\n<MatRef index=\"2\">Gypsum 5/8 in.</MatRef>\n</ConsAssm>\n\
-        <ConsAssm>\n<Name>Exposed Floor</Name>\n<CompatibleSurfType>ExteriorFloor</CompatibleSurfType>\n<MatRef index=\"0\">Concrete 140lb 10in</MatRef>\n<MatRef index=\"1\">Carpet</MatRef>\n</ConsAssm>\n\
-        <ConsAssm>\n<Name>Int Partition Demising</Name>\n<CompatibleSurfType>InteriorWall</CompatibleSurfType>\n<SpecMthd>Layers</SpecMthd>\n<MatRef index=\"0\">Ctns Ins R-2</MatRef>\n<MatRef index=\"1\">Composite 16in OC R-21</MatRef>\n<MatRef index=\"2\">- none -</MatRef>\n</ConsAssm>\n\
-        <Mat>\n<Name>Air Metal Wall Framing 16 or 24in.</Name>\n<CodeCat>Air</CodeCat>\n<CodeItem>Air - Metal Wall Framing - 16 or 24 in. OC</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Carpet</Name>\n<CodeCat>Finish Materials</CodeCat>\n<CodeItem>Carpet - 3/4 in.</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Cavity</Name>\n<CodeCat>Air</CodeCat>\n<CodeItem>Air - Cavity - Wall Roof Ceiling - 4 in. or more</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ceiling Tile</Name>\n<CodeCat>Finish Materials</CodeCat>\n<CodeItem>Acoustic Tile - 1/2 in.</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Composite 16in OC R-0</Name>\n<CodeCat>Composite</CodeCat>\n<CodeItem/>\n<FrmMat>Metal</FrmMat>\n<FrmConfig>Wall16inOC</FrmConfig>\n<FrmDepth>3_5In</FrmDepth>\n<CavityInsOpt>R-0</CavityInsOpt>\n</Mat>\n\
-        <Mat>\n<Name>Composite 16in OC R-21</Name>\n<CodeCat>Composite</CodeCat>\n<CodeItem/>\n<FrmMat>Metal</FrmMat>\n<FrmConfig>Wall16inOC</FrmConfig>\n<FrmDepth>5_5In</FrmDepth>\n<CavityInsOpt>R-21</CavityInsOpt>\n</Mat>\n\
-        <Mat>\n<Name>Concrete - 140 lb/ft3 - 4 in</Name>\n<CodeCat>Concrete</CodeCat>\n<CodeItem>Concrete - 140 lb/ft3 - 4 in.</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Concrete 140lb 8in</Name>\n<CodeCat>Concrete</CodeCat>\n<CodeItem>Concrete - 140 lb/ft3 - 8 in.</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Concrete 140lb 10in</Name>\n<CodeCat>Concrete</CodeCat>\n<CodeItem>Concrete - 140 lb/ft3 - 10 in.</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-0.01</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R0.01</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-0.10</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R0.10</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-0.50</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R0.10</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-1</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R1.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-2</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R2.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-5</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R5.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-10</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R10.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-15</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R15.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-20</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R20.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-25</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R25.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-26</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R26.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Ctns Ins R-30</Name>\n<CodeCat>Insulation Board</CodeCat>\n<CodeItem>Compliance Insulation R30.00</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Gypsum 5/8 in.</Name>\n<CodeCat>Bldg Board and Siding</CodeCat>\n<CodeItem>Gypsum Board - 5/8 in.</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Metal Rain Screen</Name>\n<CodeCat>Bldg Board and Siding</CodeCat>\n<CodeItem>Metal Siding - 1/16 in.</CodeItem>\n</Mat>\n\
-        <Mat>\n<Name>Metal Deck - 1/16in.</Name>\n<CodeCat>Bldg Board and Siding</CodeCat>\n<CodeItem>Metal Deck - 1/16 in.</CodeItem>\n</Mat>\n\
+        add_mat_con_str = "<Proj>\
+        <ConsAssm><Name>Ground contact wall: Depth = 12ft</Name><CompatibleSurfType>ExteriorWall</CompatibleSurfType><SpecMthd>Layers</SpecMthd><MatRef index=\"0\">Concrete 140lb 10in</MatRef><MatRef index=\"1\">- none -</MatRef><MatRef index=\"2\">- none -</MatRef></ConsAssm>\
+        <ConsAssm><Name>Ground contact floor: Depth = 12ft</Name><CompatibleSurfType>ExteriorFloor</CompatibleSurfType><SpecMthd>Layers</SpecMthd><MatRef index=\"0\">Concrete 140lb 10in</MatRef><MatRef index=\"1\">- none -</MatRef><MatRef index=\"2\">- none -</MatRef><MatRef index=\"3\">- none -</MatRef></ConsAssm>\
+        <ConsAssm><Name>Roof</Name><CompatibleSurfType>Roof</CompatibleSurfType><SpecMthd>Layers</SpecMthd><FieldAppliedCoating>0</FieldAppliedCoating><CRRCInitialRefl>0.9</CRRCInitialRefl><CRRCAgedRefl>0.85</CRRCAgedRefl><CRRCInitialEmit>0.85</CRRCInitialEmit><CRRCAgedEmit>0.85</CRRCAgedEmit><MatRef index=\"0\">Ctns Ins R-26</MatRef><MatRef index=\"1\">Concrete 140lb 10in</MatRef><MatRef index=\"2\">Cavity</MatRef><MatRef index=\"3\">Ceiling Tile</MatRef><MatRef index=\"4\">- none -</MatRef><RoofDens>0</RoofDens><BuiltUpRoof>0</BuiltUpRoof><BallastedRoof>0</BallastedRoof></ConsAssm>\
+        <ConsAssm><Name>Internal Ceiling/Floor</Name><CompatibleSurfType>InteriorFloor</CompatibleSurfType><SpecMthd>Layers</SpecMthd><MatRef index=\"0\">Metal Deck - 1/16in.</MatRef><MatRef index=\"1\">Concrete 140lb 10in</MatRef><MatRef index=\"2\">Carpet</MatRef><MatRef index=\"3\">- none -</MatRef><MatRef index=\"4\">- none -</MatRef><MatRef index=\"5\">- none -</MatRef></ConsAssm>\
+        <ConsAssm><Name>External Wall</Name><CompatibleSurfType>ExteriorWall</CompatibleSurfType><SpecMthd>Layers</SpecMthd><MatRef index=\"0\">Metal Rain Screen</MatRef><MatRef index=\"1\">Ctns Ins R-2</MatRef><MatRef index=\"2\">Composite 16in OC R-21</MatRef><MatRef index=\"3\">- none -</MatRef><MatRef index=\"4\">- none -</MatRef><MatRef index=\"5\">- none -</MatRef></ConsAssm>\
+        <ConsAssm><Name>Internal Partition</Name><CompatibleSurfType>InteriorWall</CompatibleSurfType><SpecMthd>Layers</SpecMthd><MatRef index=\"0\">Gypsum 5/8 in.</MatRef><MatRef index=\"1\">Air Metal Wall Framing 16 or 24in.</MatRef><MatRef index=\"2\">Gypsum 5/8 in.</MatRef></ConsAssm>\
+        <ConsAssm><Name>Exposed Floor</Name><CompatibleSurfType>ExteriorFloor</CompatibleSurfType><MatRef index=\"0\">Concrete 140lb 10in</MatRef><MatRef index=\"1\">Carpet</MatRef></ConsAssm>\
+        <ConsAssm><Name>Int Partition Demising</Name><CompatibleSurfType>InteriorWall</CompatibleSurfType><SpecMthd>Layers</SpecMthd><MatRef index=\"0\">Ctns Ins R-2</MatRef><MatRef index=\"1\">Composite 16in OC R-21</MatRef><MatRef index=\"2\">- none -</MatRef></ConsAssm>\
+        <Mat><Name>Air Metal Wall Framing 16 or 24in.</Name><CodeCat>Air</CodeCat><CodeItem>Air - Metal Wall Framing - 16 or 24 in. OC</CodeItem></Mat>\
+        <Mat><Name>Carpet</Name><CodeCat>Finish Materials</CodeCat><CodeItem>Carpet - 3/4 in.</CodeItem></Mat>\
+        <Mat><Name>Cavity</Name><CodeCat>Air</CodeCat><CodeItem>Air - Cavity - Wall Roof Ceiling - 4 in. or more</CodeItem></Mat>\
+        <Mat><Name>Ceiling Tile</Name><CodeCat>Finish Materials</CodeCat><CodeItem>Acoustic Tile - 1/2 in.</CodeItem></Mat>\
+        <Mat><Name>Composite 16in OC R-0</Name><CodeCat>Composite</CodeCat><CodeItem/><FrmMat>Metal</FrmMat><FrmConfig>Wall16inOC</FrmConfig><FrmDepth>3_5In</FrmDepth><CavityInsOpt>R-0</CavityInsOpt></Mat>\
+        <Mat><Name>Composite 16in OC R-21</Name><CodeCat>Composite</CodeCat><CodeItem/><FrmMat>Metal</FrmMat><FrmConfig>Wall16inOC</FrmConfig><FrmDepth>5_5In</FrmDepth><CavityInsOpt>R-21</CavityInsOpt></Mat>\
+        <Mat><Name>Concrete - 140 lb/ft3 - 4 in</Name><CodeCat>Concrete</CodeCat><CodeItem>Concrete - 140 lb/ft3 - 4 in.</CodeItem></Mat>\
+        <Mat><Name>Concrete 140lb 8in</Name><CodeCat>Concrete</CodeCat><CodeItem>Concrete - 140 lb/ft3 - 8 in.</CodeItem></Mat>\
+        <Mat><Name>Concrete 140lb 10in</Name><CodeCat>Concrete</CodeCat><CodeItem>Concrete - 140 lb/ft3 - 10 in.</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-0.01</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R0.01</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-0.10</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R0.10</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-0.50</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R0.10</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-1</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R1.00</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-2</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R2.00</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-5</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R5.00</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-10</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R10.00</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-15</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R15.00</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-20</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R20.00</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-25</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R25.00</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-26</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R26.00</CodeItem></Mat>\
+        <Mat><Name>Ctns Ins R-30</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R30.00</CodeItem></Mat>\
+        <Mat><Name>Gypsum 5/8 in.</Name><CodeCat>Bldg Board and Siding</CodeCat><CodeItem>Gypsum Board - 5/8 in.</CodeItem></Mat>\
+        <Mat><Name>Metal Rain Screen</Name><CodeCat>Bldg Board and Siding</CodeCat><CodeItem>Metal Siding - 1/16 in.</CodeItem></Mat>\
+        <Mat><Name>Metal Deck - 1/16in.</Name><CodeCat>Bldg Board and Siding</CodeCat><CodeItem>Metal Deck - 1/16 in.</CodeItem></Mat>\
         </Proj>"
         # The following turns the above string into a workable element and adds it before the end of the <Proj> tag in the original file
         add_mat_con = ET.fromstring(add_mat_con_str)
         ET.indent(add_mat_con)
         for child in add_mat_con:
+            proj.append(child)
+
+    if b_type == "R" or b_type == "RNR":
+        # Remove all Residential Construct Assemblies
+        for child in proj.findall("ResConsAssm"):
+            proj.remove(child)
+        
+        # The following contains a string of default CBECC materials and constructions to be added
+        add_res_cons = "<Proj>\
+        <ResConsAssm><Name>Ext Wall Cons</Name><CanAssignTo>Exterior Walls</CanAssignTo><Type>Steel Framed Wall</Type><SheathInsul2Layer>R2 Sheathing</SheathInsul2Layer>\
+        <CavityLayer>R  2</CavityLayer><FrameLayer>2x6 @ 16 in. O.C.</FrameLayer><SheathInsulLayer>R2 Sheathing</SheathInsulLayer>\
+        <SheathInsulLayerRVal>4</SheathInsulLayerRVal><WallExtFinishLayer>All Other Siding</WallExtFinishLayer></ResConsAssm><ResConsAssm>\
+        <Name>Interior Floor Cons</Name><CanAssignTo>Interior Floors</CanAssignTo><Type>Concrete / ICF / Brick</Type><MassLayer>Concrete</MassLayer>\
+        <MassThickness>10 in.</MassThickness><FurringInsulLayer>R  2</FurringInsulLayer></ResConsAssm><ResConsAssm><Name>Interior Wall Cons</Name>\
+        <CanAssignTo>Interior Walls</CanAssignTo><Type>Steel Framed Wall</Type><InsideFinishLayer>- select inside finish -</InsideFinishLayer>\
+        <OtherSideFinishLayer>- select inside finish -</OtherSideFinishLayer></ResConsAssm><ResConsAssm><Name>Roof Cons</Name><CanAssignTo>Cathedral Ceilings</CanAssignTo>\
+        <Type>Built-up Roof</Type><RoofingLayer>25 PSF (Very Heavy Ballast or Pavers)</RoofingLayer><CavityLayer>R 41</CavityLayer>\
+        <FrameLayer>2x4 @ 24 in. O.C.</FrameLayer></ResConsAssm><ResConsAssm><Name>Undergrd Wall Cons</Name><CanAssignTo>Underground Walls</CanAssignTo>\
+        </ResConsAssm></Proj>"
+
+        # The following turns the above string into a workable element and adds it before the end of the <Proj> tag in the original file
+        add_res_con = ET.fromstring(add_res_cons)
+        ET.indent(add_res_con)
+        for child in add_res_con:
             proj.append(child)
 
     # This removes 2013 from the names of Construction Assembly and Fenestration Constructions for both Residential and NonResidential
@@ -225,16 +253,17 @@ def ies_to_cbecc_run(input_f, output_f, f_uvalue, f_shgc, attic_check):
                 rm2013.text = str(name[0][1])
 
     # Checks to see if the Ground Floor construction exists- if not, will add it at the bottom of <Proj>
-    if len(root.findall(".//GroundFloor")) == 0:
-        # The following turns the above string into a workable element and adds it before the end of the <Proj> tag in the original file
-        grndflr = ET.fromstring("<Proj><ConsAssm><Name>GroundFloor</Name><CompatibleSurfType>UndergroundFloor</CompatibleSurfType><SlabType>UnheatedSlabOnGrade</SlabType></ConsAssm></Proj>")
-        ET.indent(grndflr)
-        for child in grndflr:
-            proj.append(child)
-    # Changes existing bottom/external floors to use the above Underground floor
-    for ef in root.findall(".//ExtFlr"):
-        ef[2].text = "GroundFloor"
-        ef.tag = "UndgrFlr"
+    if b_type == "NR" or b_type =="RNR":
+        if len(root.findall(".//GroundFloor")) == 0:
+            # The following turns the above string into a workable element and adds it before the end of the <Proj> tag in the original file
+            grndflr = ET.fromstring("<Proj><ConsAssm><Name>GroundFloor</Name><CompatibleSurfType>UndergroundFloor</CompatibleSurfType><SlabType>UnheatedSlabOnGrade</SlabType></ConsAssm></Proj>")
+            ET.indent(grndflr)
+            for child in grndflr:
+                proj.append(child)
+        # Changes existing bottom/external floors to use the above Underground floor
+        for ef in root.findall(".//ExtFlr"):
+            ef[2].text = "GroundFloor"
+            ef.tag = "UndgrFlr"
 
     # This writes the changes made to the output file
     ET.indent(tree)
