@@ -29,13 +29,18 @@ root = tree.getroot()
 proj = root.findall("./Proj")[0]
 bldg = root.findall("./Proj/Bldg")[0]
 
-# Stores information about whether building is NonResidential (NR) or Residential (R)
-b_type = "NR"
+# Stores information about whether building is NonResidential (NR) or Residential (R) or Both (RNR)
+b_type = "NR"   # This sets building type to NR
 # This changes GeometryInpType to Detailed
 if len(root.findall(".//ResZnGrp")) > 0:
-    b_type = "R"
+    b_type = "R"    # This sets building type to R
     for child in root.findall(".//GeometryInpType"):
         child.text = "Detailed"
+    
+    # If NR thermal zones exist, change type to Both (Note: DIFFERENT from NonRes zones in a residential model, called ResOtherZn)
+    if len(root.findall(".//ThrmlZn")) > 0:
+        b_type = "RNR"
+
 
 # This finds the index range of tags (<tag>) associated with Document Author / Responsible Designer generation in reports in order to remove them to make them blank in the final report
 # for later signing.
@@ -66,7 +71,7 @@ for spc in root.findall(".//Dr/.."):
 # Sets what Construction Assembly / Story tags to search for depending on if the file is NR or R
 consassm = ".//ConsAssm"
 story = ".//Stoy"
-if b_type == "R":
+if b_type == "R" or b_type == "RNR":
     consassm = ".//ResConsAssm"
     story = ".//ResZnGrp"
 
@@ -151,7 +156,7 @@ for reswin in root.findall(".//ResWinType"):
     else:
         reswin.findall("NFRCSHGC")[0].text = str(0.3)
 
-if b_type == "NR":
+if b_type == "NR" or b_type == "RNR":
     # Remove and replace default NR Materials & Construction Assemblies (keeps custom names)
     default_mat = ["Air Metal Wall Framing 16 or 24in.","Carpet","Cavity","Ceiling Tile","Composite 16in OC R-0","Composite 16in OC R-21",
                 "Concrete - 140 lb/ft3 - 4 in","Concrete 140lb 8in","Concrete 140lb 10in","Ctns Ins R-0.01","Ctns Ins R-0.10","Ctns Ins R-0.50",
@@ -207,7 +212,7 @@ if b_type == "NR":
     for child in add_mat_con:
         proj.append(child)
 
-if b_type == "R":
+if b_type == "R" or b_type == "RNR":
     # Remove all Residential Construct Assemblies
     for child in proj.findall("ResConsAssm"):
         proj.remove(child)
@@ -248,16 +253,17 @@ for ca in list_cons_rem:
             rm2013.text = str(name[0][1])
 
 # Checks to see if the Ground Floor construction exists- if not, will add it at the bottom of <Proj>
-if len(root.findall(".//GroundFloor")) == 0:
-    # The following turns the above string into a workable element and adds it before the end of the <Proj> tag in the original file
-    grndflr = ET.fromstring("<Proj><ConsAssm><Name>GroundFloor</Name><CompatibleSurfType>UndergroundFloor</CompatibleSurfType><SlabType>UnheatedSlabOnGrade</SlabType></ConsAssm></Proj>")
-    ET.indent(grndflr)
-    for child in grndflr:
-        proj.append(child)
-# Changes existing bottom/external floors to use the above Underground floor
-for ef in root.findall(".//ExtFlr"):
-    ef[2].text = "GroundFloor"
-    ef.tag = "UndgrFlr"
+if b_type == "NR" or b_type == "RNR":
+    if len(root.findall(".//GroundFloor")) == 0:
+        # The following turns the above string into a workable element and adds it before the end of the <Proj> tag in the original file
+        grndflr = ET.fromstring("<Proj><ConsAssm><Name>GroundFloor</Name><CompatibleSurfType>UndergroundFloor</CompatibleSurfType><SlabType>UnheatedSlabOnGrade</SlabType></ConsAssm></Proj>")
+        ET.indent(grndflr)
+        for child in grndflr:
+            proj.append(child)
+    # Changes existing bottom/external floors to use the above Underground floor
+    for ef in root.findall(".//ExtFlr"):
+        ef[2].text = "GroundFloor"
+        ef.tag = "UndgrFlr"
 
 # This writes the changes made to the output file
 ET.indent(tree)
