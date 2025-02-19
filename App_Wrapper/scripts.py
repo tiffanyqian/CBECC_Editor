@@ -67,23 +67,26 @@ def ies_to_cbecc_run(input_f, output_f, f_uvalue, f_shgc, attic_check):
             if child.text == "HoleDoor":
                 spc.remove(child)
 
-    # Sets what Construction Assembly / Story tags to search for depending on if the file is NR or R
-    consassm = ".//ConsAssm"
-    story = ".//Story"
-    if b_type == "R":
-        consassm = ".//ResConsAssm"
-        story = ".//ResZnGrp"
-
-    # This removes Attic constructions & Floors with Attics in them for both Residential and NonResidential
+   # This removes Attic constructions & Floors with Attics in them for both Residential and NonResidential
     if attic_check == False:
-        for rca in root.findall(consassm):
-            for child in rca.findall("./Name"):
-                if len(re.findall("(Attic)",child.text)) != 0:
-                    proj.remove(rca)
-        for parent in root.findall(story):
-            for child in parent.findall("./Name"):
-                if len(re.findall("(Attic)",child.text)) != 0:
-                    bldg.remove(parent)
+        if b_type == "NR" or b_type == "RNR":
+            for nrca in root.findall(".//ConsAssm"):
+                for child in nrca.findall("./Name"):
+                    if len(re.findall("(Attic)",child.text)) != 0:
+                        proj.remove(nrca)
+            for parent in root.findall(".//Story"):
+                for child in parent.findall("./Name"):
+                    if len(re.findall("(Attic)",child.text)) != 0:
+                        bldg.remove(parent)
+        if b_type == "R" or b_type == "RNR":
+            for rca in root.findall(".//ResConsAssm"):
+                for child in rca.findall("./Name"):
+                    if len(re.findall("(Attic)",child.text)) != 0:
+                        proj.remove(rca)
+            for parent in root.findall(".//ResZnGrp"):
+                for child in parent.findall("./Name"):
+                    if len(re.findall("(Attic)",child.text)) != 0:
+                        bldg.remove(parent)
 
     # This makes ALL vent sources for spaces be Forced if not already done so
     for vs in root.findall(".//VentSrc"):
