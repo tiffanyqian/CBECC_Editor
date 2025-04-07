@@ -203,16 +203,36 @@ def ZS_Sys(bldg, tz, **kwargs):
     fan = kwargs.get("fan","VariableSpeedDrive")
     
     tz_name = tz[0].text
-    if len(tz.findall("PriAirCondgSysRef")) == 0:
-        pri_ac = ET.SubElement(tz,"PriAirCondgSysRef",attrib={"index":"0"})
-        pri_ac.text = tz_name + " " + sz_zs_type
+    if len(tz.findall("PriAirCondgSysRef")) != 0 and len(tz.findall("VentSysRef")) != 0:
+        print("TZ: ",tz_name," already references another Ventilation System. ZoneSys created and linked only to HVAC system. See more in CBECC file.")
+        
+        hvac_ref = tz.findall("./PriAirCondgSysRef")
+        if len(hvac_ref) > 0:
+            hvac_ref[0].text = tz_name + " " + sz_zs_type
+        hvac_prior = tz.findall("./PriAirCondgSysPriority")
+        if len(hvac_prior) > 0:
+            hvac_prior[0].text = "1"
+        else:
+            hvac_prior = ET.SubElement(tz,"PriAirCondgSysPriority",attrib={"index":"0"})
+            hvac_prior.text = "1"
+
+        vent_prior = tz.findall("./VentSysPriority")
+        if len(vent_prior) > 0:
+            vent_prior[0].text = "2"
+        else:
+            vent_prior = ET.SubElement(tz,"VentSysPriority")
+            vent_prior.text = "2"
     else:
-        print("TZ: ",tz_name," already references another HVAC System. ZoneSys created but not linked. See more in CBECC file.")
-    if len(tz.findall("VentSysRef")) == 0:
-        vsr = ET.SubElement(tz,"VentSysRef")
-        vsr.text = tz_name + " " + sz_zs_type
-    else:
-        print("TZ: ",tz_name," already references another Ventilation System. ZoneSys created but not linked. See more in CBECC file.")
+        if len(tz.findall("PriAirCondgSysRef")) == 0:
+            pri_ac = ET.SubElement(tz,"PriAirCondgSysRef",attrib={"index":"0"})
+            pri_ac.text = tz_name + " " + sz_zs_type
+        else:
+            print("TZ: ",tz_name," already references another HVAC System. ZoneSys created but not linked. See more in CBECC file.")
+        if len(tz.findall("VentSysRef")) == 0:
+            vsr = ET.SubElement(tz,"VentSysRef")
+            vsr.text = tz_name + " " + sz_zs_type
+        else:
+            print("TZ: ",tz_name," already references another Ventilation System. ZoneSys created but not linked. See more in CBECC file.")
 
     sz_zs = add_subelement(bldg,"ZnSys")
     add_subelement(sz_zs,"Name",text=tz_name + " " + sz_zs_type)
