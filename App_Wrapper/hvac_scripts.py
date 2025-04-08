@@ -268,3 +268,39 @@ def ZS_Exhaust(bldg, tz, **kwargs):
         add_subelement(exh_zs,"ExhCtrlMthd",text=exh_ctrl)
 
     add_Fan(exh_zs,tz_name,type=exh_fan)
+
+# ---------------------------------------------------------------------------------------------------------------------------
+## *** FLUID SYSTEMS *** ##
+# ---------------------------------------------------------------------------------------------------------------------------
+
+def FluidSys(proj, fs_type, ctrl_type, temp_ctrl):
+    fs_name = ""
+    repeat = 0
+    # Check to see if FluidSystem type already exists, if so, append number
+    for ex_fs in proj.findall(".//FluidSys"):
+        if ex_fs[1].text == fs_type:
+            repeat = repeat + 1
+            fs_name = " "+str(repeat)
+
+    # Naming based on FluidSys Type
+    if fs_type == "ChilledWater":
+        fs_name = "CHW"+fs_name
+    elif fs_type == "CondenserWater":
+        fs_name = "CCW"+fs_name
+    elif fs_type == "HotWater":
+        fs_name = "HHW"+fs_name
+
+    # Creating the tags for the FluidSystem
+    fs = add_subelement(proj,"FluidSys")
+    add_subelement(fs,"Name",text=fs_name)
+    add_subelement(fs,"Type",text=fs_type)
+    add_subelement(fs,"CtrlType",text=ctrl_type)
+    add_subelement(fs,"TempCtrl",text=temp_ctrl)
+
+    fs_sup = add_subelement(fs,"FluidSeg")
+    add_subelement(fs_sup,"Name",text=fs_name+" Supply")
+    add_subelement(fs_sup,"Type",text="PrimarySupply")
+
+    fs_ret = add_subelement(fs,"FluidSeg")
+    add_subelement(fs_sup,"Name",text=fs_name+" Return")
+    add_subelement(fs_sup,"Type",text="PrimaryReturn")
