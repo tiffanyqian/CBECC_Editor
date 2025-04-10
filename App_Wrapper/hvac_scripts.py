@@ -302,5 +302,121 @@ def FluidSys(proj, fs_type, ctrl_type, temp_ctrl):
     add_subelement(fs_sup,"Type",text="PrimarySupply")
 
     fs_ret = add_subelement(fs,"FluidSeg")
-    add_subelement(fs_sup,"Name",text=fs_name+" Return")
-    add_subelement(fs_sup,"Type",text="PrimaryReturn")
+    add_subelement(fs_ret,"Name",text=fs_name+" Return")
+    add_subelement(fs_ret,"Type",text="PrimaryReturn")
+
+    return fs_name
+
+def FS_Chiller(fs, **kwargs):
+    create_num = kwargs.get("create_num",0)
+    ch_type = kwargs.get("ch_type","Screw")
+    ch_cond_type = kwargs.get("cond_type","Air")
+    pump_spd_ctrl = kwargs.get("pump_spd_ctrl","VariableSpeed")
+
+    ch_name = "Chiller"
+    # Check to see if any Chillers already exist, if so, append number
+    repeat = len(fs.findall(".//Chlr"))
+    if repeat > 0:
+        ch_name = "Chiller " + str(repeat)
+
+    # Finding FluidSeg In/Out References
+    fs_in = 0
+    fs_out = 0
+    for seg in fs.findall(".//FluidSeg"):
+        if seg[1].text == "PrimarySupply":
+            fs_in = seg[0].text
+        if seg[1].text == "PrimaryReturn":
+            fs_out = seg[0].text
+    if (fs_in == 0) or (fs_out == 0):
+        exit("ERROR: No Fluid Segment on FluidSystem. Check CBECC file or create new FluidSystem.")
+
+    for x in range(create_num):
+        if x > 0:
+            ch_name = "Chiller " + str(repeat+x)
+
+        ch = add_subelement(fs,"Chlr")
+        add_subelement(ch,"Name",text=ch_name)
+        add_subelement(ch,"Type",text=ch_type)
+        add_subelement(ch,"CndsrType",text=ch_cond_type)
+        add_subelement(ch,"EvapFluidSegInRef",text=fs_in)
+        add_subelement(ch,"EvapFluidSegOutRef",text=fs_out)
+        ch_pump = add_subelement(ch,"Pump")
+        add_subelement(ch_pump,"Name",text=ch_name+" Pump")
+        add_subelement(ch_pump,"SpdCtrl",text=pump_spd_ctrl)
+
+def FS_Boiler(fs, **kwargs):
+    create_num = kwargs.get("create_num",0)
+    bl_type = kwargs.get("bl_type","HotWater")
+    bl_fuel = kwargs.get("fuel_src","Electric")
+    pump_spd_ctrl = kwargs.get("pump_spd_ctrl","VariableSpeed")
+
+    bl_name = "Boiler"
+    # Check to see if any Boilers already exist, if so, append number
+    repeat = len(fs.findall(".//Blr"))
+    if repeat > 0:
+        bl_name = "Boiler " + str(repeat)
+    
+    # Finding FluidSeg In/Out References
+    fs_in = 0
+    fs_out = 0
+    for seg in fs.findall(".//FluidSeg"):
+        if seg[1].text == "PrimarySupply":
+            fs_in = seg[0].text
+        if seg[1].text == "PrimaryReturn":
+            fs_out = seg[0].text
+    if (fs_in == 0) or (fs_out == 0):
+        exit("ERROR: No Fluid Segment on FluidSystem. Check CBECC file or create new FluidSystem.")
+
+    for x in range(create_num):
+        if x > 0:
+            bl_name = "Boiler " + str(repeat+x)
+
+        bl = add_subelement(fs,"Blr")
+        add_subelement(bl,"Name",text=bl_name)
+        add_subelement(bl,"Type",text=bl_type)
+        add_subelement(bl,"FuelSrc",text=bl_fuel)
+        add_subelement(bl,"FluidSegInRef",text=fs_in)
+        add_subelement(bl,"FluidSegOutRef",text=fs_out)
+        bl_pump = add_subelement(bl,"Pump")
+        add_subelement(bl_pump,"Name",text=bl_name+" Pump")
+        add_subelement(bl_pump,"SpdCtrl",text=pump_spd_ctrl)
+
+def FS_WaterHeater(fs, **kwargs):
+    create_num = kwargs.get("create_num",0)
+    wh_type = kwargs.get("wh_type","HeatPumpPackaged")
+    wh_subtype = kwargs.get("wh_subtype","R410a_MultiPass")
+    pump_spd_ctrl = kwargs.get("pump_spd_ctrl","VariableSpeed")
+
+    wh_name = "WaterHeater"
+    # Check to see if any WaterHeaters already exist, if so, append number
+    repeat = len(fs.findall(".//WtrHtr"))
+    if repeat > 0:
+        wh_name = "WaterHeater " + str(repeat)
+
+    # Finding FluidSeg In/Out References
+    fs_in = 0
+    fs_out = 0
+    for seg in fs.findall(".//FluidSeg"):
+        if seg[1].text == "PrimarySupply":
+            fs_in = seg[0].text
+        if seg[1].text == "PrimaryReturn":
+            fs_out = seg[0].text
+    if (fs_in == 0) or (fs_out == 0):
+        exit("ERROR: No Fluid Segment on FluidSystem. Check CBECC file or create new FluidSystem.")
+
+    for x in range(create_num):
+        if x > 0:
+            wh_name = "WaterHeater " + str(repeat+x)
+
+        wh = add_subelement(fs,"WtrHtr")
+        add_subelement(wh,"Name",text=wh_name)
+        add_subelement(wh,"Type",text=wh_type)
+        add_subelement(wh,"FluidSegOutRef",text=fs_in)
+        add_subelement(wh,"FluidSegInRef",text=fs_out)
+        # add_subelement(wh,"COP",text=cop)
+        add_subelement(wh,"HtPumpSubType",text=wh_subtype)
+        add_subelement(wh,"StorLoc",text="1")
+        # add_subelement(wh,"CapRtd",text=cap_rat)
+        wh_pump = add_subelement(wh,"Pump")
+        add_subelement(wh_pump,"Name",text=wh_name+" Pump")
+        add_subelement(wh_pump,"SpdCtrl",text=pump_spd_ctrl)
