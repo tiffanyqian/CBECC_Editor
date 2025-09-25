@@ -22,17 +22,25 @@ def add_subelement(parent,tag,**kwargs):
 
 def add_CC(parent, name, **kwargs):
     type = kwargs.get("type","DirectExpansion")
+    proj = kwargs.get("proj_root", None)
 
     cc = add_subelement(parent,"CoilClg")
     add_subelement(cc,"Name",text=name+" CoilCooling")
     add_subelement(cc,"Type",text=type)
+    
+    if proj is not None:
+        fluid_Connect(proj, cc, type)
 
 def add_CH(parent, name, **kwargs):
     type = kwargs.get("type","HeatPump")
+    proj = kwargs.get("proj_root", None)
 
     ch = add_subelement(parent,"CoilHtg")
     add_subelement(ch,"Name",text=name+" CoilHeating")
     add_subelement(ch,"Type",text=type)
+        
+    if proj is not None:
+        fluid_Connect(proj, ch, type)
 
 def add_Fan(parent, name, **kwargs):
     type = kwargs.get("type",0)
@@ -73,6 +81,7 @@ def add_AirSeg(parent, name, **kwargs):
     fan_in = kwargs.get("fan_in",0)
     fan_out = kwargs.get("fan_out",0)
     path = kwargs.get("path",None)
+    proj = kwargs.get("proj_root", None)
 
     if type is not None:
         name = name + " " + type
@@ -84,8 +93,12 @@ def add_AirSeg(parent, name, **kwargs):
         add_subelement(airseg,"Path",text=path)
 
     if type == "Supply":
-        add_CC(airseg,name,type=cc)
-        add_CH(airseg,name,type=ch)
+        if proj is None:
+            add_CC(airseg,name,type=cc)
+            add_CH(airseg,name,type=ch)
+        else:
+            add_CC(airseg,name,type=cc,proj_root=proj)
+            add_CH(airseg,name,type=ch,proj_root=proj)
         add_Fan(airseg,name,type=fan_in)
     elif type == "Relief":
         add_Fan(airseg,name,type=fan_out)
@@ -98,13 +111,14 @@ def add_AirSeg(parent, name, **kwargs):
 ## *** SINGLE ZONE AIR SYSTEMS *** ##
 # ---------------------------------------------------------------------------------------------------------------------------
 
-def SZ_HP_AC_VAV(bldg, tz, **kwargs):
+def SZ_HP_AC_VAV(proj, tz, **kwargs):
     sz_as_type = kwargs.get("sz_as_type","SZHP")
     coilcool = kwargs.get("cc","DirectExpansion")
     coilheat = kwargs.get("ch","HeatPump")
     outsideac = kwargs.get("oac","DifferentialDryBulb")
     supp_fan = kwargs.get("fan_in","VariableSpeedDrive")
     return_fan = kwargs.get("fan_out","VariableSpeedDrive")
+    bldg = proj.findall(".//Bldg")[0]
     
     tz_name = tz[0].text
     if len(tz.findall("PriAirCondgSysRef")) == 0:
@@ -121,14 +135,18 @@ def SZ_HP_AC_VAV(bldg, tz, **kwargs):
     add_subelement(szhp_as,"OptStart",text="0")
     add_subelement(szhp_as,"AirFlowPerSqFt",text="0.15")
 
-    add_AirSeg(szhp_as, name=tz_name, type="Supply", cc=coilcool, ch=coilheat, fan_in=supp_fan)
+    if (coilheat == "HotWater") or (coilcool == "ChilledWater"):
+        add_AirSeg(szhp_as, name=tz_name, type="Supply", cc=coilcool, ch=coilheat, fan_in=supp_fan, proj_root=proj)
+    else:
+        add_AirSeg(szhp_as, name=tz_name, type="Supply", cc=coilcool, ch=coilheat, fan_in=supp_fan)
     add_AirSeg(szhp_as, name=tz_name, type="Return", fan_out=return_fan)
     add_OACtrl(szhp_as, name=tz_name, type=outsideac)
     add_TermUnit(szhp_as, name=tz_name)
 
-def AS_Exhaust(bldg, tz, **kwargs):
+def AS_Exhaust(proj, tz, **kwargs):
     exh_fan = kwargs.get("fan_out","VariableSpeedDrive")
     exh_ctrl = kwargs.get("exh_ctrl","-- DEFAULT --")
+    bldg = proj.findall(".//Bldg")[0]
 
     tz_name = tz[0].text
     if len(tz.findall("ExhSysRef")) == 0:
@@ -149,7 +167,7 @@ def AS_Exhaust(bldg, tz, **kwargs):
 ## *** MULTI ZONE AIR SYSTEMS *** ##
 # ---------------------------------------------------------------------------------------------------------------------------
 
-def mz_VAV(bldg, mz_name, yes_rh_tz, no_rh_tz, **kwargs):
+def mz_VAV(proj, mz_name, yes_rh_tz, no_rh_tz, **kwargs):
     mz_as_type = kwargs.get("mz_as_type","PVAV")
     coilcool = kwargs.get("cc","DirectExpansion")
     coilheat = kwargs.get("ch","HeatPump")
@@ -157,6 +175,7 @@ def mz_VAV(bldg, mz_name, yes_rh_tz, no_rh_tz, **kwargs):
     supp_fan = kwargs.get("fan_in","VariableSpeedDrive")
     return_fan = kwargs.get("fan_out","VariableSpeedDrive")
     reheat_ch = kwargs.get("rh_ch_type","Resistance")
+    bldg = proj.findall(".//Bldg")[0]
 
     mz_as = add_subelement(bldg,"AirSys")
     add_subelement(mz_as,"Name",text=mz_name)
@@ -166,7 +185,10 @@ def mz_VAV(bldg, mz_name, yes_rh_tz, no_rh_tz, **kwargs):
     add_subelement(mz_as,"ClgCtrl",text="FixedDualSetpoint")
     add_subelement(mz_as,"ClgFixedSupTemp",text="75")
     add_subelement(mz_as,"HtgFixedSupTemp",text="55")
-    add_AirSeg(mz_as,mz_name,type="Supply",cc=coilcool,ch=coilheat,fan_in=supp_fan)
+    if (coilheat == "HotWater") or (coilcool == "ChilledWater"):
+        add_AirSeg(mz_as,mz_name,type="Supply",cc=coilcool,ch=coilheat,fan_in=supp_fan,proj_root=proj)
+    else:
+        add_AirSeg(mz_as,mz_name,type="Supply",cc=coilcool,ch=coilheat,fan_in=supp_fan)
     add_AirSeg(mz_as,mz_name,type="Return",fan_out=return_fan)
     add_OACtrl(mz_as,mz_name,type=outsideac)
 
@@ -196,11 +218,12 @@ def mz_VAV(bldg, mz_name, yes_rh_tz, no_rh_tz, **kwargs):
 ## *** SINGLE ZONE ZONE SYSTEMS *** ##
 # ---------------------------------------------------------------------------------------------------------------------------
 
-def ZS_Sys(bldg, tz, **kwargs):
+def ZS_Sys(proj, tz, **kwargs):
     sz_zs_type = kwargs.get("sz_zs_type","SZHP")
     coilcool = kwargs.get("cc","DirectExpansion")
     coilheat = kwargs.get("ch","HeatPump")
     fan = kwargs.get("fan","VariableSpeedDrive")
+    bldg = proj.findall(".//Bldg")[0]
     
     tz_name = tz[0].text
     if len(tz.findall("PriAirCondgSysRef")) != 0 and len(tz.findall("VentSysRef")) != 0:
@@ -234,7 +257,7 @@ def ZS_Sys(bldg, tz, **kwargs):
         else:
             print("TZ: ",tz_name," already references another Ventilation System. ZoneSys created but not linked. See more in CBECC file.")
 
-    sz_zs = add_subelement(bldg,"ZnSys")
+    sz_zs = add_subelement(proj,"ZnSys")
     add_subelement(sz_zs,"Name",text=tz_name + " " + sz_zs_type)
     add_subelement(sz_zs,"Type",text=sz_zs_type)
 
@@ -245,13 +268,20 @@ def ZS_Sys(bldg, tz, **kwargs):
         add_subelement(sz_zs,"Cnt",text="1")
         add_subelement(sz_zs,"DuctLctn",text="Conditioned")
 
-    add_CC(sz_zs,tz_name,type=coilcool)
-    add_CH(sz_zs,tz_name,type=coilheat)
+    if coilcool == "ChilledWater":
+        dd_CC(sz_zs,tz_name,type=coilcool, proj_root=proj)
+    else:
+        add_CC(sz_zs,tz_name,type=coilcool)
+    if coilheat == "HotWater":
+        add_CH(sz_zs,tz_name,type=coilheat, proj_root=proj)
+    else:
+        add_CH(sz_zs,tz_name,type=coilheat)
     add_Fan(sz_zs,tz_name,type=fan)
 
-def ZS_Exhaust(bldg, tz, **kwargs):
+def ZS_Exhaust(proj, tz, **kwargs):
     exh_fan = kwargs.get("fan_out","VariableSpeedDrive")
     exh_ctrl = kwargs.get("exh_ctrl","-- DEFAULT --")
+    bldg = proj.findall(".//Bldg")[0]
 
     tz_name = tz[0].text
     if len(tz.findall("ExhSysRef")) == 0:
@@ -420,3 +450,39 @@ def FS_WaterHeater(fs, **kwargs):
         wh_pump = add_subelement(wh,"Pump")
         add_subelement(wh_pump,"Name",text=wh_name+" Pump")
         add_subelement(wh_pump,"SpdCtrl",text=pump_spd_ctrl)
+
+def fluid_Connect(proj, coil, c_type):
+    if c_type == "HotWater":
+        fs_sup = 0
+        fs_ret = 0
+        for fs in proj.findall(".//FluidSys"):
+            if fs[1].text == "HotWater":
+                for seg in fs.findall(".//FluidSeg"):
+                    if seg[1].text == "PrimarySupply": 
+                        fs_sup = seg[0].text
+                    if seg[1].text == "PrimaryReturn": 
+                        fs_ret = seg[0].text
+                break
+
+        if fs_sup == 0 or fs_ret == 0:
+            add_subelement(coil,"FluidSegInRef",text=fs_sup)
+            add_subelement(coil,"FluidSegOutRef",text=fs_ret)
+        else:
+            print("No complete HotWater FluidSystems found. Heating Coil with HotWater created but not connected, see CBECC file.")
+    elif c_type == "ChilledWater":
+        fs_sup = 0
+        fs_ret = 0
+        for fs in proj.findall(".//FluidSys"):
+            if fs[1].text == "ChilledWater":
+                for seg in fs.findall(".//FluidSeg"):
+                    if seg[1].text == "PrimarySupply": 
+                        fs_sup = seg[0].text
+                    if seg[1].text == "PrimaryReturn": 
+                        fs_ret = seg[0].text
+                break
+
+        if fs_sup == 0 or fs_ret == 0:
+            add_subelement(coil,"FluidSegInRef",text=fs_sup)
+            add_subelement(coil,"FluidSegOutRef",text=fs_ret)
+        else:
+            print("No complete ChilledWater FluidSystems found. Cooling Coil with ChilledWater created but not connected, see CBECC file.")
