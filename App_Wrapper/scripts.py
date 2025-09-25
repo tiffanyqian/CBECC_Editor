@@ -88,6 +88,14 @@ def ies_to_cbecc_run(input_f, output_f, f_uvalue, f_shgc, attic_check):
                     if len(re.findall("(Attic)",child.text)) != 0:
                         bldg.remove(parent)
 
+    # This adds an AirBarrier object if there is none, and sets it to "not verified" for compliance credit
+    if len(proj.findall(".//AirBarrier")) == 0:
+        ab = ET.SubElement(proj, "AirBarrier")
+        ab.text = "Air barrier - not verified"
+    else:
+        for ab in proj.findall(".//AirBarrier"):
+            ab.text = "Air barrier - not verified"
+
     # This makes ALL vent sources for spaces be Forced if not already done so
     for vs in root.findall(".//VentSrc"):
         vs.text = "Forced"
