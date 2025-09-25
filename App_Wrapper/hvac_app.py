@@ -589,7 +589,7 @@ class SZ_AS_Dialog(QDialog):
             self.buttonBox.rejected.connect(self.reject)
         elif role == QDialogButtonBox.StandardButton.Ok:
             sz_type = self.sz_as_type.currentText()
-            bldg = ET_root.findall(".//Bldg")[0]
+            proj = ET_root.findall(".//Proj")[0]
 
             self.tz_list = [x.text() for x in self.widget_tz.selectedItems()]
             print("SELECTED THERMAL ZONES:", self.tz_list)
@@ -597,7 +597,7 @@ class SZ_AS_Dialog(QDialog):
             if sz_type == "SZHP" or sz_type == "SZAC" or sz_type == "SZVAVHP" or sz_type == "SZVAVAC":
                 for tz in ET_root.findall(".//ThrmlZn"):
                     if tz[0].text in self.tz_list:
-                        hvac.SZ_HP_AC_VAV(bldg, tz, cc=self.sz_hp_ac_CC_box.currentText(), ch=self.sz_hp_ac_CH_box.currentText(), oac=self.sz_hp_ac_oac_box.currentText(),
+                        hvac.SZ_HP_AC_VAV(proj, tz, cc=self.sz_hp_ac_CC_box.currentText(), ch=self.sz_hp_ac_CH_box.currentText(), oac=self.sz_hp_ac_oac_box.currentText(),
                         fan_in=self.sz_hp_ac_s_fan_box.currentText(), fan_out=self.sz_hp_ac_r_fan_box.currentText(), sz_as_type = sz_type)
                 # TESTING OUTPUTS: This writes the changes made to a testing output file
                 # ET.indent(ET_tree)
@@ -605,7 +605,7 @@ class SZ_AS_Dialog(QDialog):
             elif sz_type == "Exhaust":
                 for tz in ET_root.findall(".//ThrmlZn"):
                     if tz[0].text in self.tz_list:
-                        hvac.AS_Exhaust(bldg, tz, exh_ctrl = self.exh_sys_ctrl.currentText(), fan_out=self.exh_fan_box.currentText())
+                        hvac.AS_Exhaust(proj, tz, exh_ctrl = self.exh_sys_ctrl.currentText(), fan_out=self.exh_fan_box.currentText())
             self.buttonBox.accepted.connect(self.accept)
 
 class MZ_AS_Dialog(QDialog):
@@ -749,18 +749,18 @@ class MZ_AS_Dialog(QDialog):
             self.buttonBox.rejected.connect(self.reject)
         elif role == QDialogButtonBox.StandardButton.Ok:
             sz_type = self.mz_as_type.currentText()
-            bldg = ET_root.findall(".//Bldg")[0]
+            proj = ET_root.findall(".//Proj")[0]
 
             yes_rh_tz_list = [self.widget_yes_rh.item(x).text() for x in range(self.widget_yes_rh.count())]
             no_rh_tz_list = [self.widget_no_rh.item(x).text() for x in range(self.widget_no_rh.count())]
             
             if len(self.mz_name.text()) == 0:
                 search_type = ".//"+self.mz_as_type.currentText()
-                mz_name = self.mz_as_type.currentText() + " " + str(len(bldg.findall(search_type))+1)
+                mz_name = self.mz_as_type.currentText() + " " + str(len(proj.findall(search_type))+1)
             else:
                 mz_name = self.mz_name.text()
             
-            hvac.mz_VAV(bldg, mz_name, yes_rh_tz_list, no_rh_tz_list, cc=self.mz_CC_box.currentText(), ch=self.mz_CH_box.currentText(), oac=self.mz_oac_box.currentText(),
+            hvac.mz_VAV(proj, mz_name, yes_rh_tz_list, no_rh_tz_list, cc=self.mz_CC_box.currentText(), ch=self.mz_CH_box.currentText(), oac=self.mz_oac_box.currentText(),
             fan_in=self.mz_s_fan_box.currentText(), fan_out=self.mz_r_fan_box.currentText(), mz_as_type = self.mz_as_type.currentText(),
             rh_ch_type = self.rh_ch_type_box.currentText())
 
@@ -887,7 +887,7 @@ class SZ_ZS_Dialog(QDialog):
             self.buttonBox.rejected.connect(self.reject)
         elif role == QDialogButtonBox.StandardButton.Ok:
             sz_type = self.sz_zs_type.currentText()
-            bldg = ET_root.findall(".//Bldg")[0]
+            proj = ET_root.findall(".//Proj")[0]
 
             self.tz_list = [x.text() for x in self.widget_tz.selectedItems()]
             print("SELECTED THERMAL ZONES:", self.tz_list)
@@ -895,11 +895,11 @@ class SZ_ZS_Dialog(QDialog):
             if sz_type == "Exhaust":
                 for tz in ET_root.findall(".//ThrmlZn"):
                     if tz[0].text in self.tz_list:
-                        hvac.ZS_Exhaust(bldg, tz, exh_ctrl = self.exh_sys_ctrl.currentText(), fan_out=self.exh_fan_box.currentText())
+                        hvac.ZS_Exhaust(proj, tz, exh_ctrl = self.exh_sys_ctrl.currentText(), fan_out=self.exh_fan_box.currentText())
             else:
                 for tz in ET_root.findall(".//ThrmlZn"):
                     if tz[0].text in self.tz_list:
-                        hvac.ZS_Sys(bldg, tz, cc=self.sz_hp_ac_CC_box.currentText(), ch=self.sz_hp_ac_CH_box.currentText(), fan=self.sz_hp_ac_s_fan_box.currentText(),
+                        hvac.ZS_Sys(proj, tz, cc=self.sz_hp_ac_CC_box.currentText(), ch=self.sz_hp_ac_CH_box.currentText(), fan=self.sz_hp_ac_s_fan_box.currentText(),
                         sz_zs_type = sz_type)
                 # TESTING OUTPUTS: This writes the changes made to a testing output file
                 # ET.indent(ET_tree)
