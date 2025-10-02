@@ -160,7 +160,7 @@ class MainWindow(QMainWindow):
 
         # Taking in the new CBECC file
         cbecc_file = ""
-        cbecc_file, end_discard = QFileDialog.getOpenFileName(self, "Select File",r"C://","CBECC Files (*.cibd22x *.cibd22 *.cibd19x *cibd19)")
+        cbecc_file, end_discard = QFileDialog.getOpenFileName(self, "Select File",r"C://","CBECC Files (*.cibd22x *.cibd22 *.cibd19x *cibd19 *.cibd16x *cibd16)")
 
         # Loading stuff in
         if len(cbecc_file) != 0:
