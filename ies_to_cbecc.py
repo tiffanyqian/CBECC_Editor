@@ -195,7 +195,7 @@ if b_type == "NR" or b_type == "RNR":
     <Mat><Name>Concrete 140lb 10in</Name><CodeCat>Concrete</CodeCat><CodeItem>Concrete - 140 lb/ft3 - 10 in.</CodeItem></Mat>\
     <Mat><Name>Ctns Ins R-0.01</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R0.01</CodeItem></Mat>\
     <Mat><Name>Ctns Ins R-0.10</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R0.10</CodeItem></Mat>\
-    <Mat><Name>Ctns Ins R-0.50</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R0.10</CodeItem></Mat>\
+    <Mat><Name>Ctns Ins R-0.50</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R0.50</CodeItem></Mat>\
     <Mat><Name>Ctns Ins R-1</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R1.00</CodeItem></Mat>\
     <Mat><Name>Ctns Ins R-2</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R2.00</CodeItem></Mat>\
     <Mat><Name>Ctns Ins R-5</Name><CodeCat>Insulation Board</CodeCat><CodeItem>Compliance Insulation R5.00</CodeItem></Mat>\
