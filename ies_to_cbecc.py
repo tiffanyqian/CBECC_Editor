@@ -79,10 +79,10 @@ if b_type == "NR" or b_type == "RNR":
             if len(re.findall("(Attic)",child.text)) != 0:
                 bldg.remove(parent)
 if b_type == "R" or b_type == "RNR":
-    for rca in root.findall(".//ResConsAssm"):
-        for child in rca.findall("./Name"):
-            if len(re.findall("(Attic)",child.text)) != 0:
-                proj.remove(rca)
+    # for rca in root.findall(".//ResConsAssm"):
+    #     for child in rca.findall("./Name"):
+    #         if len(re.findall("(Attic)",child.text)) != 0:
+    #             proj.remove(rca)
     for parent in root.findall(".//ResZnGrp"):
         for child in parent.findall("./Name"):
             if len(re.findall("(Attic)",child.text)) != 0:
@@ -263,8 +263,16 @@ if b_type == "NR" or b_type == "RNR":
         ET.indent(grndflr)
         for child in grndflr:
             proj.append(child)
+    
+    # Find First story / ResOtherZn / ResZn
+    first_story = None
+    for b in bldg:
+        if "Story" in b.tag or "ResZnGrp" in b.tag:
+            first_story = b
+            break
+    
     # Changes existing bottom/external floors to use the above Underground floor
-    for ef in root.findall(".//ExtFlr"):
+    for ef in first_story.findall(".//ExtFlr"):
         ef[2].text = "GroundFloor"
         ef.tag = "UndgrFlr"
 
