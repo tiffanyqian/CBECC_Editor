@@ -160,7 +160,7 @@ class MainWindow(QMainWindow):
 
         # Taking in the new CBECC file
         cbecc_file = ""
-        cbecc_file, end_discard = QFileDialog.getOpenFileName(self, "Select File",r"C://","CBECC Files (*.cibd22x *.cibd22 *.cibd19x *cibd19 *.cibd16x *cibd16)")
+        cbecc_file, end_discard = QFileDialog.getOpenFileName(self, "Select File",r"C://","CBECC Files (*cibd25x *.cibd22x *.cibd19x *.cibd16x )")
 
         # Loading stuff in
         if len(cbecc_file) != 0:
@@ -599,9 +599,6 @@ class SZ_AS_Dialog(QDialog):
                     if tz[0].text in self.tz_list:
                         hvac.SZ_HP_AC_VAV(proj, tz, cc=self.sz_hp_ac_CC_box.currentText(), ch=self.sz_hp_ac_CH_box.currentText(), oac=self.sz_hp_ac_oac_box.currentText(),
                         fan_in=self.sz_hp_ac_s_fan_box.currentText(), fan_out=self.sz_hp_ac_r_fan_box.currentText(), sz_as_type = sz_type)
-                # TESTING OUTPUTS: This writes the changes made to a testing output file
-                # ET.indent(ET_tree)
-                # ET_tree.write("./xtras/testing.cibd22x")
             elif sz_type == "Exhaust":
                 for tz in ET_root.findall(".//ThrmlZn"):
                     if tz[0].text in self.tz_list:
@@ -764,10 +761,6 @@ class MZ_AS_Dialog(QDialog):
             fan_in=self.mz_s_fan_box.currentText(), fan_out=self.mz_r_fan_box.currentText(), mz_as_type = self.mz_as_type.currentText(),
             rh_ch_type = self.rh_ch_type_box.currentText())
 
-            # TESTING OUTPUTS: This writes the changes made to a testing output file
-            # ET.indent(ET_tree)
-            # ET_tree.write("./xtras/testing.cibd22x")
-
             self.buttonBox.accepted.connect(self.accept)
 
 class SZ_ZS_Dialog(QDialog):
@@ -901,9 +894,6 @@ class SZ_ZS_Dialog(QDialog):
                     if tz[0].text in self.tz_list:
                         hvac.ZS_Sys(proj, tz, cc=self.sz_hp_ac_CC_box.currentText(), ch=self.sz_hp_ac_CH_box.currentText(), fan=self.sz_hp_ac_s_fan_box.currentText(),
                         sz_zs_type = sz_type)
-                # TESTING OUTPUTS: This writes the changes made to a testing output file
-                # ET.indent(ET_tree)
-                # ET_tree.write("./xtras/testing.cibd22x")
             self.buttonBox.accepted.connect(self.accept)
 
 app = QApplication(sys.argv)

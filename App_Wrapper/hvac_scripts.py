@@ -269,7 +269,7 @@ def ZS_Sys(proj, tz, **kwargs):
         add_subelement(sz_zs,"DuctLctn",text="Conditioned")
 
     if coilcool == "ChilledWater":
-        dd_CC(sz_zs,tz_name,type=coilcool, proj_root=proj)
+        add_CC(sz_zs,tz_name,type=coilcool, proj_root=proj)
     else:
         add_CC(sz_zs,tz_name,type=coilcool)
     if coilheat == "HotWater":

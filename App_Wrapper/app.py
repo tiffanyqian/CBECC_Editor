@@ -642,10 +642,15 @@ class MainWindow(QMainWindow):
         self.f_output.setEnabled(False)
 
         i_c_dir = ""
-        i_c_dir, end_discard = QFileDialog.getOpenFileName(self, "Select File",r"C://","2022 CBECC Files (*.cibd22x)")
+        i_c_dir, end_discard = QFileDialog.getOpenFileName(self, "Select File",r"C://","2022 CBECC Files (*.cibd22x);; 2025 CBECC Files (*.cibd25x)")
 
         if len(i_c_dir) != 0:
-            if re.search(".cibd22x",i_c_dir):
+            search_key = ".xml"
+            if "22x" in end_discard:
+                search_key = ".cibd22x"
+            elif "25x" in end_discard:
+                search_key = ".cibd25x"
+            if re.search(search_key,i_c_dir):
                 self.curr_folder.setText(i_c_dir)
                 self.f_output.setText(re.findall(r".*/(.*$)",i_c_dir)[0])
                 
